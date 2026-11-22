@@ -17,6 +17,39 @@ export function isPrimaryHostEmail(email: string | null | undefined): boolean {
   return PRIMARY_HOST_EMAILS.has(email.trim().toLowerCase());
 }
 
+export interface HostSettingsSlice {
+  addedHosts?: Array<{
+    email: string;
+    displayName?: string | null;
+    addedByEmail?: string;
+    addedAt?: string;
+  }>;
+}
+
+export function isAuthorizedAddedHost(
+  email: string | null | undefined,
+  institutionSettings?: HostSettingsSlice | null
+): boolean {
+  if (!email || !institutionSettings?.addedHosts?.length) return false;
+  const normalized = email.trim().toLowerCase();
+  return institutionSettings.addedHosts.some(
+    (entry) => typeof entry?.email === 'string' && entry.email.trim().toLowerCase() === normalized
+  );
+}
+
+export function resolveEffectiveRole(
+  email: string | null | undefined,
+  institutionSettings?: HostSettingsSlice | null
+): { role: UserRole; serverAdmin: boolean } {
+  if (isPrimaryHostEmail(email)) {
+    return { role: 'platform_admin', serverAdmin: true };
+  }
+  if (isAuthorizedAddedHost(email, institutionSettings)) {
+    return { role: 'host', serverAdmin: false };
+  }
+  return { role: 'student', serverAdmin: false };
+}
+
 export interface AuthenticatedUser {
   id: string;
   authUid: string;
@@ -72,6 +105,7 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
           institutionId: string;
           status: string;
           institutionName: string;
+          institutionSettings: HostSettingsSlice | null;
         }
       | undefined;
 
@@ -95,6 +129,7 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
           institutionId: profiles.institutionId,
           status: profiles.status,
           institutionName: institutions.name,
+          institutionSettings: institutions.settings,
         })
         .from(profiles)
         .innerJoin(institutions, eq(profiles.institutionId, institutions.id))
@@ -115,6 +150,7 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
           institutionId: profiles.institutionId,
           status: profiles.status,
           institutionName: institutions.name,
+          institutionSettings: institutions.settings,
         })
         .from(profiles)
         .innerJoin(institutions, eq(profiles.institutionId, institutions.id))
@@ -139,13 +175,21 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
       });
     }
 
-    const primaryHost = isPrimaryHostEmail(profileRow.email);
-    const enforcedRole: UserRole = primaryHost ? 'platform_admin' : 'student';
+    const { role: enforcedRole, serverAdmin } = resolveEffectiveRole(
+      profileRow.email,
+      profileRow.institutionSettings
+    );
 
     req.currentUser = {
-      ...profileRow,
+      id: profileRow.id,
+      authUid: profileRow.authUid,
+      email: profileRow.email,
+      displayName: profileRow.displayName,
       role: enforcedRole,
-      serverAdmin: primaryHost,
+      serverAdmin,
+      institutionId: profileRow.institutionId,
+      institutionName: profileRow.institutionName,
+      status: profileRow.status,
     };
     return next();
   } catch (err) {

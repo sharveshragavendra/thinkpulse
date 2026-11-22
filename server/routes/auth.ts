@@ -24,10 +24,12 @@ import {
   createRateLimiter,
   isPrimaryHostEmail,
   requireAuth,
+  resolveEffectiveRole,
   type AuthRequest,
+  type HostSettingsSlice,
 } from '../middleware/auth.ts';
 import { recordAuditLog } from '../services/audit.ts';
-import type { UserProfile, UserRole } from '../../shared/types.ts';
+import type { UserProfile } from '../../shared/types.ts';
 
 const router = Router();
 const authRateLimit = createRateLimiter('auth', 25, 60_000);
@@ -59,15 +61,16 @@ async function getOrCreateDefaultInstitution() {
 
 function serializeProfile(
   p: typeof profiles.$inferSelect,
-  institutionName?: string
+  institutionName?: string,
+  institutionSettings?: HostSettingsSlice | null
 ): UserProfile {
-  const primaryHost = isPrimaryHostEmail(p.email);
+  const { role, serverAdmin } = resolveEffectiveRole(p.email, institutionSettings);
   return {
     id: p.id,
     email: p.email,
     displayName: p.displayName,
-    role: primaryHost ? 'platform_admin' : 'student',
-    serverAdmin: primaryHost,
+    role,
+    serverAdmin,
     institutionId: p.institutionId,
     institutionName,
     studentCode: p.studentCode,
@@ -199,7 +202,11 @@ router.post('/auth/login', authRateLimit, async (req: AuthRequest, res) => {
   try {
     const email = parsed.data.email.trim().toLowerCase();
     const rows = await db
-      .select({ profile: profiles, institutionName: institutions.name })
+      .select({
+        profile: profiles,
+        institutionName: institutions.name,
+        institutionSettings: institutions.settings,
+      })
       .from(profiles)
       .innerJoin(institutions, eq(profiles.institutionId, institutions.id))
       .where(eq(profiles.email, email))
@@ -219,16 +226,18 @@ router.post('/auth/login', authRateLimit, async (req: AuthRequest, res) => {
       });
     }
 
-    const primaryHost = isPrimaryHostEmail(record.profile.email);
-    const resolvedRole: UserRole = primaryHost ? 'platform_admin' : 'student';
+    const { role: resolvedRole, serverAdmin } = resolveEffectiveRole(
+      record.profile.email,
+      record.institutionSettings
+    );
     let syncedProfile = record.profile;
 
-    if (syncedProfile.role !== resolvedRole || syncedProfile.serverAdmin !== primaryHost) {
+    if (syncedProfile.role !== resolvedRole || syncedProfile.serverAdmin !== serverAdmin) {
       const [updated] = await db
         .update(profiles)
         .set({
           role: resolvedRole,
-          serverAdmin: primaryHost,
+          serverAdmin,
           updatedAt: new Date(),
         })
         .where(eq(profiles.id, syncedProfile.id))
@@ -245,7 +254,7 @@ router.post('/auth/login', authRateLimit, async (req: AuthRequest, res) => {
 
     return res.json({
       token,
-      profile: serializeProfile(syncedProfile, record.institutionName),
+      profile: serializeProfile(syncedProfile, record.institutionName, record.institutionSettings),
     });
   } catch (err) {
     console.error('[auth] login error:', err);
@@ -274,12 +283,13 @@ router.post('/auth/google', authRateLimit, async (req: AuthRequest, res) => {
       return res.status(400).json({ error: 'Google account did not return an email address.' });
     }
 
-    const primaryHost = isPrimaryHostEmail(email);
-    const resolvedRole: UserRole = primaryHost ? 'platform_admin' : 'student';
-
     const inst = await getOrCreateDefaultInstitution();
     const existingRows = await db
-      .select({ profile: profiles, institutionName: institutions.name })
+      .select({
+        profile: profiles,
+        institutionName: institutions.name,
+        institutionSettings: institutions.settings,
+      })
       .from(profiles)
       .innerJoin(institutions, eq(profiles.institutionId, institutions.id))
       .where(eq(profiles.email, email))
@@ -287,9 +297,16 @@ router.post('/auth/google', authRateLimit, async (req: AuthRequest, res) => {
 
     let profile = existingRows[0]?.profile;
     let institutionName = existingRows[0]?.institutionName || inst.name;
+    const effectiveSettings = existingRows[0]?.institutionSettings || inst.settings;
+
+    const { role: resolvedRole, serverAdmin } = resolveEffectiveRole(email, effectiveSettings);
+    const isHostOrAdmin = resolvedRole === 'host' || resolvedRole === 'platform_admin';
+    const addedHostEntry = effectiveSettings?.addedHosts?.find(
+      (entry) => entry.email.trim().toLowerCase() === email
+    );
 
     if (!profile) {
-      if (!primaryHost && inst.settings?.allowStudentSelfRegistration === false) {
+      if (!isHostOrAdmin && inst.settings?.allowStudentSelfRegistration === false) {
         return res.status(403).json({
           error: 'New registrations require an institution invitation. Contact your administrator.',
         });
@@ -300,10 +317,10 @@ router.post('/auth/google', authRateLimit, async (req: AuthRequest, res) => {
         .values({
           authUid: decoded.uid,
           email,
-          displayName: decoded.name || email.split('@')[0],
+          displayName: decoded.name || addedHostEntry?.displayName?.trim() || email.split('@')[0],
           institutionId: inst.id,
           role: resolvedRole,
-          serverAdmin: primaryHost,
+          serverAdmin,
           status: 'active',
         })
         .onConflictDoUpdate({
@@ -311,7 +328,7 @@ router.post('/auth/google', authRateLimit, async (req: AuthRequest, res) => {
           set: {
             authUid: decoded.uid,
             role: resolvedRole,
-            serverAdmin: primaryHost,
+            serverAdmin,
             updatedAt: new Date(),
           },
         })
@@ -332,14 +349,14 @@ router.post('/auth/google', authRateLimit, async (req: AuthRequest, res) => {
     } else if (
       profile.authUid !== decoded.uid ||
       profile.role !== resolvedRole ||
-      profile.serverAdmin !== primaryHost
+      profile.serverAdmin !== serverAdmin
     ) {
       const [updated] = await db
         .update(profiles)
         .set({
           authUid: decoded.uid,
           role: resolvedRole,
-          serverAdmin: primaryHost,
+          serverAdmin,
           updatedAt: new Date(),
         })
         .where(eq(profiles.id, profile.id))
@@ -367,7 +384,7 @@ router.post('/auth/google', authRateLimit, async (req: AuthRequest, res) => {
 
     return res.json({
       token,
-      profile: serializeProfile(profile, institutionName),
+      profile: serializeProfile(profile, institutionName, effectiveSettings),
     });
   } catch (err) {
     console.error('[auth] google login database error:', err);
@@ -552,7 +569,11 @@ router.post('/auth/logout', (_req, res) => {
 router.get('/me', requireAuth, async (req: AuthRequest, res) => {
   try {
     const rows = await db
-      .select({ profile: profiles, institutionName: institutions.name })
+      .select({
+        profile: profiles,
+        institutionName: institutions.name,
+        institutionSettings: institutions.settings,
+      })
       .from(profiles)
       .innerJoin(institutions, eq(profiles.institutionId, institutions.id))
       .where(eq(profiles.id, req.currentUser!.id))
@@ -561,7 +582,9 @@ router.get('/me', requireAuth, async (req: AuthRequest, res) => {
     if (!rows[0]) {
       return res.status(404).json({ error: 'Profile not found.' });
     }
-    return res.json({ profile: serializeProfile(rows[0].profile, rows[0].institutionName) });
+    return res.json({
+      profile: serializeProfile(rows[0].profile, rows[0].institutionName, rows[0].institutionSettings),
+    });
   } catch (err) {
     console.error('[auth] /me error:', err);
     return res.status(500).json({ error: 'Failed to load user profile.' });

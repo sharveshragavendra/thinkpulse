@@ -214,3 +214,12 @@ export const updateSettingsSchema = z.object({
   allowStudentSelfRegistration: z.boolean().optional(),
   defaultPrivacyMode: privacyModeSchema.optional(),
 });
+
+export const addHostSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address.').max(200),
+  displayName: z.string().trim().max(100).optional(),
+});
+
+export const removeHostSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address.').max(200),
+});

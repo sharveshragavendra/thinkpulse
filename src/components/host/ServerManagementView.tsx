@@ -186,11 +186,11 @@ export function ServerManagementView() {
   if (forbidden) {
     return (
       <div className="tp-surface rounded-2xl p-10 text-center space-y-3">
-        <ShieldAlert className="w-8 h-8 text-rose-600 mx-auto" />
-        <h2 className="font-display font-bold text-lg text-[#17143A]">
+        <ShieldAlert className="w-8 h-8 text-rose-600 dark:text-rose-400 mx-auto" />
+        <h2 className="font-display font-bold text-lg text-[#17143A] dark:text-[#F4F2FF]">
           Platform Administrator Permission Required
         </h2>
-        <p className="text-sm text-[#64748B] max-w-md mx-auto">
+        <p className="text-sm text-[#64748B] dark:text-[#A49EC6] max-w-md mx-auto">
           Ordinary hosts cannot modify application server endpoints. Contact your Platform Administrator to request privileged Server Admin access.
         </p>
       </div>
@@ -201,10 +201,10 @@ export function ServerManagementView() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display font-bold text-2xl text-[#17143A]">
+          <h1 className="font-display font-bold text-2xl text-[#17143A] dark:text-[#F4F2FF]">
             Server Management Portal
           </h1>
-          <p className="text-sm text-[#64748B] mt-0.5">
+          <p className="text-sm text-[#64748B] dark:text-[#A49EC6] mt-0.5">
             Privileged registry of approved application API endpoints with controlled backend health checks, auditing, and rollback.
           </p>
         </div>
@@ -219,35 +219,35 @@ export function ServerManagementView() {
       </div>
 
       {/* Deployment Topology Clarification */}
-      <div className="rounded-2xl bg-[#F4F1FF] border border-[#DDD9F5] px-4 py-3 text-xs text-[#4B4772] leading-relaxed">
+      <div className="rounded-2xl bg-[#F4F1FF] dark:bg-[#8B5CF6]/15 border border-[#DDD9F5] dark:border-[#C4B5FD]/25 px-4 py-3 text-xs text-[#4B4772] dark:text-[#E5E0FF] leading-relaxed">
         <strong>Deployment topology note:</strong> This registry manages approved API endpoints and environments. It does not distribute workloads, create high availability, or migrate PostgreSQL data. Loopback, private RFC1918, link-local, and cloud metadata addresses are blocked server-side, and production endpoints require HTTPS.
       </div>
 
       {error && (
-        <div role="alert" className="rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-800 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div role="alert" className="rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 px-4 py-3 text-sm text-rose-800 dark:text-rose-200 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 dark:text-rose-400" />
           <span>{error}</span>
         </div>
       )}
 
       {notice && (
-        <div role="status" className="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div role="status" className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/55 border border-emerald-200 dark:border-emerald-400/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 shrink-0 dark:text-emerald-400" />
           <span>{notice}</span>
         </div>
       )}
 
       <div className="tp-surface rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-8 flex items-center justify-center gap-2 text-sm text-[#64748B]">
-            <Loader2 className="w-5 h-5 animate-spin text-[#6334E8]" />
+          <div className="p-8 flex items-center justify-center gap-2 text-sm text-[#64748B] dark:text-[#A49EC6]">
+            <Loader2 className="w-5 h-5 animate-spin text-[#6334E8] dark:text-[#C4B5FD]" />
             <span>Loading server registry...</span>
           </div>
         ) : servers.length === 0 ? (
           <div className="p-12 text-center space-y-2">
-            <Server className="w-8 h-8 text-[#6334E8] mx-auto" />
-            <p className="text-sm font-semibold text-[#17143A]">No approved servers registered yet</p>
-            <p className="text-xs text-[#64748B]">
+            <Server className="w-8 h-8 text-[#6334E8] dark:text-[#C4B5FD] mx-auto" />
+            <p className="text-sm font-semibold text-[#17143A] dark:text-[#F4F2FF]">No approved servers registered yet</p>
+            <p className="text-xs text-[#64748B] dark:text-[#A49EC6]">
               Add an approved public HTTPS application endpoint to test connectivity and track health status.
             </p>
           </div>
@@ -255,7 +255,7 @@ export function ServerManagementView() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-sm">
               <thead>
-                <tr className="border-b border-[#ECE9FA] bg-[#FAF9FF] text-xs font-semibold text-[#64748B]">
+                <tr className="border-b border-[#ECE9FA] dark:border-white/10 bg-[#FAF9FF] dark:bg-white/5 text-xs font-semibold text-[#64748B] dark:text-[#C5BFE4]">
                   <th className="py-3 px-5">Server & Endpoint</th>
                   <th className="py-3 px-4">Environment</th>
                   <th className="py-3 px-4">Measured Health</th>
@@ -263,34 +263,34 @@ export function ServerManagementView() {
                   <th className="py-3 px-5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#ECE9FA]">
+              <tbody className="divide-y divide-[#ECE9FA] dark:divide-white/10">
                 {servers.map((srv) => (
-                  <tr key={srv.id} className="hover:bg-[#FAF9FF]">
+                  <tr key={srv.id} className="hover:bg-[#FAF9FF] dark:hover:bg-white/6 transition-colors">
                     <td className="py-3.5 px-5">
-                      <p className="font-semibold text-[#17143A]">{srv.displayName}</p>
-                      <p className="font-mono text-xs text-[#64748B] mt-0.5">
+                      <p className="font-semibold text-[#17143A] dark:text-[#F4F2FF]">{srv.displayName}</p>
+                      <p className="font-mono text-xs text-[#64748B] dark:text-[#A49EC6] mt-0.5">
                         {srv.apiBaseUrl} · {srv.host}:{srv.port}
                       </p>
                     </td>
-                    <td className="py-3.5 px-4 text-xs capitalize font-medium text-[#4B4772]">
+                    <td className="py-3.5 px-4 text-xs capitalize font-medium text-[#4B4772] dark:text-[#C5BFE4]">
                       {srv.environment}
                     </td>
                     <td className="py-3.5 px-4 text-xs">
                       <p
                         className={`font-semibold capitalize ${
                           srv.healthStatus === 'healthy'
-                            ? 'text-emerald-700'
+                            ? 'text-emerald-700 dark:text-emerald-300'
                             : srv.healthStatus === 'degraded'
-                            ? 'text-amber-700'
+                            ? 'text-amber-700 dark:text-amber-300'
                             : srv.healthStatus === 'unreachable'
-                            ? 'text-rose-700'
-                            : 'text-[#64748B]'
+                            ? 'text-rose-700 dark:text-rose-300'
+                            : 'text-[#64748B] dark:text-[#A49EC6]'
                         }`}
                       >
                         {srv.healthStatus}
                         {srv.latencyMs !== null ? ` · ${srv.latencyMs}ms` : ''}
                       </p>
-                      <p className="text-[11px] text-[#94A3B8] tabular-nums">
+                      <p className="text-[11px] text-[#94A3B8] dark:text-[#8E88B0] tabular-nums">
                         {srv.lastCheckedAt
                           ? `Checked ${new Date(srv.lastCheckedAt).toLocaleString()}`
                           : 'Not measured yet'}
@@ -298,11 +298,11 @@ export function ServerManagementView() {
                     </td>
                     <td className="py-3.5 px-4 text-xs font-semibold">
                       {srv.isActive ? (
-                        <span className="text-[#6334E8]">Active Endpoint</span>
+                        <span className="text-[#6334E8] dark:text-[#C4B5FD]">Active Endpoint</span>
                       ) : srv.isEnabled ? (
-                        <span className="text-[#64748B]">Standby</span>
+                        <span className="text-[#64748B] dark:text-[#A49EC6]">Standby</span>
                       ) : (
-                        <span className="text-rose-700">Disabled</span>
+                        <span className="text-rose-700 dark:text-rose-300">Disabled</span>
                       )}
                     </td>
                     <td className="py-3.5 px-5 text-right whitespace-nowrap space-x-1.5">
@@ -310,9 +310,9 @@ export function ServerManagementView() {
                         type="button"
                         disabled={busyId !== null}
                         onClick={() => void handleTest(srv.id)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#DDD9F5] bg-white hover:bg-[#F4F1FF] text-xs font-semibold text-[#17143A] cursor-pointer"
+                        className="tp-glass-btn inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] cursor-pointer"
                       >
-                        <Activity className="w-3.5 h-3.5 text-[#6334E8]" />
+                        <Activity className="w-3.5 h-3.5 text-[#6334E8] dark:text-[#C4B5FD]" />
                         <span>Test</span>
                       </button>
 
@@ -321,7 +321,7 @@ export function ServerManagementView() {
                           type="button"
                           disabled={busyId !== null}
                           onClick={() => setPendingAction({ type: 'activate', srv })}
-                          className="px-2.5 py-1.5 rounded-lg bg-[#F4F1FF] hover:bg-[#E7E0FF] text-xs font-semibold text-[#6334E8] cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-lg bg-[#F4F1FF] dark:bg-[#8B5CF6]/22 hover:bg-[#E7E0FF] dark:hover:bg-[#8B5CF6]/35 text-xs font-semibold text-[#6334E8] dark:text-[#DDD6FE] cursor-pointer"
                         >
                           Activate
                         </button>
@@ -330,7 +330,7 @@ export function ServerManagementView() {
                       <button
                         type="button"
                         onClick={() => openModal(srv)}
-                        className="px-2.5 py-1.5 rounded-lg border border-[#DDD9F5] bg-white text-xs font-semibold text-[#4B4772] cursor-pointer"
+                        className="tp-glass-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#4B4772] dark:text-[#E5E0FF] cursor-pointer"
                       >
                         Edit
                       </button>
@@ -341,7 +341,7 @@ export function ServerManagementView() {
                           disabled={busyId !== null}
                           onClick={() => setPendingAction({ type: 'rollback', srv })}
                           title="Rollback to previous approved config"
-                          className="p-1.5 rounded-lg text-amber-700 hover:bg-amber-50 cursor-pointer"
+                          className="p-1.5 rounded-lg text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/60 cursor-pointer"
                         >
                           <RotateCcw className="w-4 h-4" />
                         </button>
@@ -353,7 +353,7 @@ export function ServerManagementView() {
                           disabled={busyId !== null}
                           onClick={() => setPendingAction({ type: 'delete', srv })}
                           title="Remove server"
-                          className="p-1.5 rounded-lg text-[#94A3B8] hover:text-rose-600 hover:bg-rose-50 cursor-pointer"
+                          className="p-1.5 rounded-lg text-[#94A3B8] dark:text-[#8E88B0] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 cursor-pointer"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -369,77 +369,81 @@ export function ServerManagementView() {
 
       {modalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/50 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/50 dark:bg-black/75 backdrop-blur-md p-4"
           role="dialog"
           aria-modal="true"
         >
           <div className="w-full max-w-lg rounded-[30px] tp-modal-glass p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-display font-bold text-lg text-[#17143A]">
+              <h2 className="font-display font-bold text-lg text-[#17143A] dark:text-[#F4F2FF]">
                 {editing ? 'Edit Server Endpoint' : 'Register Approved Server'}
               </h2>
-              <button type="button" onClick={() => setModalOpen(false)} className="p-1.5 rounded-xl hover:bg-[#F4F1FF] cursor-pointer">
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="p-1.5 rounded-xl text-[#4B4772] dark:text-[#C5BFE4] hover:bg-[#F4F1FF] dark:hover:bg-white/10 cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
             {error && (
-              <div role="alert" className="rounded-xl bg-rose-50 border border-rose-200 px-3.5 py-2.5 text-xs text-rose-800">
+              <div role="alert" className="rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 px-3.5 py-2.5 text-xs text-rose-800 dark:text-rose-200">
                 {error}
               </div>
             )}
             <form onSubmit={handleSave} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold text-[#17143A] mb-1">Server Display Name *</label>
+                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Server Display Name *</label>
                 <input
                   type="text"
                   required
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Asia Southeast Primary API"
-                  className="w-full rounded-xl border border-[#DDD9F5] px-3 py-2 text-sm"
+                  className="tp-input w-full rounded-xl px-3 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">
-                  <label className="block text-xs font-semibold text-[#17143A] mb-1">Hostname *</label>
+                  <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Hostname *</label>
                   <input
                     type="text"
                     required
                     value={host}
                     onChange={(e) => setHost(e.target.value)}
                     placeholder="api.thinkpulse.example.com"
-                    className="w-full rounded-xl border border-[#DDD9F5] px-3 py-2 text-sm font-mono"
+                    className="tp-input w-full rounded-xl px-3 py-2 text-sm font-mono text-[#17143A] dark:text-[#F4F2FF]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#17143A] mb-1">Port *</label>
+                  <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Port *</label>
                   <input
                     type="number"
                     required
                     value={port}
                     onChange={(e) => setPort(Number(e.target.value) || 443)}
-                    className="w-full rounded-xl border border-[#DDD9F5] px-3 py-2 text-sm font-mono"
+                    className="tp-input w-full rounded-xl px-3 py-2 text-sm font-mono text-[#17143A] dark:text-[#F4F2FF]"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#17143A] mb-1">Protocol</label>
+                  <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Protocol</label>
                   <select
                     value={protocol}
                     onChange={(e) => setProtocol(e.target.value as 'https' | 'http')}
-                    className="w-full rounded-xl border border-[#DDD9F5] px-3 py-2 text-sm"
+                    className="tp-input w-full rounded-xl px-3 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                   >
                     <option value="https">HTTPS</option>
                     <option value="http">HTTP (non-prod only)</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#17143A] mb-1">Environment</label>
+                  <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Environment</label>
                   <select
                     value={environment}
                     onChange={(e) => setEnvironment(e.target.value as ServerEnvironment)}
-                    className="w-full rounded-xl border border-[#DDD9F5] px-3 py-2 text-sm"
+                    className="tp-input w-full rounded-xl px-3 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                   >
                     <option value="production">Production</option>
                     <option value="staging">Staging</option>
@@ -448,30 +452,31 @@ export function ServerManagementView() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#17143A] mb-1">API Base URL *</label>
+                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">API Base URL *</label>
                 <input
                   type="url"
                   required
                   value={apiBaseUrl}
                   onChange={(e) => setApiBaseUrl(e.target.value)}
                   placeholder="https://api.thinkpulse.example.com"
-                  className="w-full rounded-xl border border-[#DDD9F5] px-3 py-2 text-sm font-mono"
+                  className="tp-input w-full rounded-xl px-3 py-2 text-sm font-mono text-[#17143A] dark:text-[#F4F2FF]"
                 />
               </div>
-              <label className="inline-flex items-center gap-2 text-xs text-[#17143A] cursor-pointer">
+              <label className="inline-flex items-center gap-2 text-xs text-[#17143A] dark:text-[#E5E0FF] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={isEnabled}
                   onChange={(e) => setIsEnabled(e.target.checked)}
+                  className="accent-[#7C3AED]"
                 />
                 <span>Endpoint enabled for activation</span>
               </label>
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#17143A]/8 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-[#DDD9F5] text-xs font-semibold cursor-pointer"
+                  className="tp-glass-btn px-4 py-2 rounded-xl text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] cursor-pointer"
                 >
                   Cancel
                 </button>

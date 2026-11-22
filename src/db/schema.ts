@@ -22,6 +22,12 @@ export const institutions = pgTable('institutions', {
     allowStudentSelfRegistration?: boolean;
     defaultPrivacyMode?: 'anonymous' | 'normal';
     graceWindowSeconds?: number;
+    addedHosts?: Array<{
+      email: string;
+      displayName?: string | null;
+      addedByEmail: string;
+      addedAt: string;
+    }>;
   }>().notNull().default(sql`'{"allowStudentSelfRegistration": true, "defaultPrivacyMode": "normal", "graceWindowSeconds": 15}'::jsonb`),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),

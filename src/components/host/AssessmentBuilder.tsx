@@ -310,8 +310,8 @@ export function AssessmentBuilder({
 
   if (loading) {
     return (
-      <div className="p-12 flex items-center justify-center gap-2 text-sm text-[#64748B]">
-        <Loader2 className="w-5 h-5 animate-spin text-[#6334E8]" />
+      <div className="p-12 flex items-center justify-center gap-2 text-sm text-[#64748B] dark:text-[#A49EC6]">
+        <Loader2 className="w-5 h-5 animate-spin text-[#6334E8] dark:text-[#C4B5FD]" />
         <span>Loading {isQuiz ? 'quiz' : 'poll'} editor...</span>
       </div>
     );
@@ -325,21 +325,21 @@ export function AssessmentBuilder({
           <button
             type="button"
             onClick={handleBackClick}
-            className="p-2 rounded-xl border border-[#DDD9F5] bg-white hover:bg-[#FAF9FF] text-[#17143A] cursor-pointer"
+            className="tp-glass-btn p-2 rounded-xl text-[#17143A] dark:text-[#F4F2FF] cursor-pointer"
             aria-label="Back to list"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="font-display font-bold text-xl sm:text-2xl text-[#17143A]">
+            <h1 className="font-display font-bold text-xl sm:text-2xl text-[#17143A] dark:text-[#F4F2FF]">
               {currentId ? `Edit ${isQuiz ? 'Quiz' : 'Poll'}` : `Create ${isQuiz ? 'Quiz' : 'Poll'}`}
             </h1>
-            <div className="flex items-center gap-2 text-xs text-[#64748B] mt-0.5 tabular-nums">
+            <div className="flex items-center gap-2 text-xs text-[#64748B] dark:text-[#A49EC6] mt-0.5 tabular-nums">
               <span>{questions.length} {questions.length === 1 ? 'question' : 'questions'}</span>
               {isQuiz && (
                 <>
                   <span aria-hidden="true">·</span>
-                  <span className="font-mono font-semibold text-[#6334E8]">{totalMarks} total marks</span>
+                  <span className="font-mono font-semibold text-[#6334E8] dark:text-[#C4B5FD]">{totalMarks} total marks</span>
                 </>
               )}
               {!isQuiz && (
@@ -351,7 +351,7 @@ export function AssessmentBuilder({
               {dirty && (
                 <>
                   <span aria-hidden="true">·</span>
-                  <span className="text-amber-700 font-medium">Unsaved changes</span>
+                  <span className="text-amber-700 dark:text-amber-300 font-medium">Unsaved changes</span>
                 </>
               )}
             </div>
@@ -362,18 +362,18 @@ export function AssessmentBuilder({
           <button
             type="button"
             onClick={() => setPreviewOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#DDD9F5] bg-white hover:bg-[#FAF9FF] text-xs font-semibold text-[#17143A] cursor-pointer"
+            className="tp-glass-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] cursor-pointer"
           >
-            <Eye className="w-4 h-4 text-[#6334E8]" />
+            <Eye className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD]" />
             <span>Preview Student View</span>
           </button>
           <button
             type="button"
             disabled={saving || launching}
             onClick={() => void handleSave()}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#DDD9F5] bg-white hover:bg-[#FAF9FF] text-xs font-semibold text-[#17143A] disabled:opacity-60 cursor-pointer"
+            className="tp-glass-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] disabled:opacity-60 cursor-pointer"
           >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 text-[#6334E8]" />}
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD]" />}
             <span>Save Draft</span>
           </button>
           <button
@@ -389,22 +389,22 @@ export function AssessmentBuilder({
       </div>
 
       {error && (
-        <div role="alert" className="rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-800 flex items-start gap-2.5">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+        <div role="alert" className="rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 px-4 py-3 text-sm text-rose-800 dark:text-rose-200 flex items-start gap-2.5">
+          <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>
       )}
 
       {notice && (
-        <div role="status" className="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 flex items-start gap-2.5">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+        <div role="status" className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/55 border border-emerald-200 dark:border-emerald-400/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200 flex items-start gap-2.5">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
           <span>{notice}</span>
         </div>
       )}
 
       {showRecalcBanner && isQuiz && (
-        <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="text-sm text-amber-900">
+        <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/55 border border-amber-200 dark:border-amber-400/30 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="text-sm text-amber-900 dark:text-amber-200">
             <p className="font-semibold">Answer key updated on a quiz with existing submissions</p>
             <p className="text-xs mt-0.5">
               Recalculate objective scores atomically now? Manually graded written responses will be preserved.
@@ -422,12 +422,12 @@ export function AssessmentBuilder({
         </div>
       )}
 
-      {/* Configuration Surface (Solid white for editor clarity) */}
+      {/* Configuration Surface */}
       <div className="tp-surface rounded-2xl p-5 sm:p-6 space-y-5">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           <div className="lg:col-span-8 space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[#17143A] mb-1.5">
+              <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1.5">
                 {isQuiz ? 'Quiz Title' : 'Poll Title'} *
               </label>
               <input
@@ -438,13 +438,13 @@ export function AssessmentBuilder({
                   setDirty(true);
                 }}
                 placeholder={isQuiz ? 'e.g., Week 6 Relational Databases Quiz' : 'e.g., Lecture Pace & Topic Feedback Poll'}
-                className="w-full rounded-xl bg-white border border-[#DDD9F5] px-3.5 py-2.5 text-sm text-[#17143A] focus:outline-none focus:ring-2 focus:ring-[#6334E8]/30"
+                className="tp-input w-full rounded-xl px-3.5 py-2.5 text-sm text-[#17143A] dark:text-[#F4F2FF]"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-[#17143A] mb-1.5">Description</label>
+                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1.5">Description</label>
                 <textarea
                   rows={2}
                   value={description}
@@ -453,11 +453,11 @@ export function AssessmentBuilder({
                     setDirty(true);
                   }}
                   placeholder="Short context shown to students before joining..."
-                  className="w-full rounded-xl bg-white border border-[#DDD9F5] px-3.5 py-2 text-sm text-[#17143A]"
+                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#17143A] mb-1.5">
+                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1.5">
                   Instructions (optional)
                 </label>
                 <textarea
@@ -468,7 +468,7 @@ export function AssessmentBuilder({
                     setDirty(true);
                   }}
                   placeholder="Any rules, time guidance, or rubric notes..."
-                  className="w-full rounded-xl bg-white border border-[#DDD9F5] px-3.5 py-2 text-sm text-[#17143A]"
+                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 />
               </div>
             </div>
@@ -478,9 +478,9 @@ export function AssessmentBuilder({
             {/* Explicit Privacy Mode Selector */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-[#17143A]">Privacy Mode *</label>
+                <label className="text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF]">Privacy Mode *</label>
                 {privacyLocked && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 dark:text-amber-300">
                     <Lock className="w-3 h-3" />
                     Locked after submission
                   </span>
@@ -496,12 +496,12 @@ export function AssessmentBuilder({
                   }}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer disabled:opacity-60 ${
                     privacyMode === 'normal'
-                      ? 'bg-[#F4F1FF] border-[#6334E8] text-[#17143A]'
-                      : 'bg-white border-[#DDD9F5] text-[#64748B]'
+                      ? 'bg-[#F4F1FF] dark:bg-[#8B5CF6]/22 border-[#6334E8] dark:border-[#A78BFA] text-[#17143A] dark:text-[#F4F2FF]'
+                      : 'bg-white dark:bg-[#171133]/75 border-[#DDD9F5] dark:border-white/12 text-[#64748B] dark:text-[#A49EC6]'
                   }`}
                 >
                   <div className="flex items-center gap-1.5 text-xs font-semibold">
-                    <UserCheck className="w-3.5 h-3.5 text-[#6334E8]" />
+                    <UserCheck className="w-3.5 h-3.5 text-[#6334E8] dark:text-[#C4B5FD]" />
                     <span>Normal</span>
                   </div>
                   <p className="text-[11px] mt-1 leading-tight">Linked to student profile</p>
@@ -515,12 +515,12 @@ export function AssessmentBuilder({
                   }}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer disabled:opacity-60 ${
                     privacyMode === 'anonymous'
-                      ? 'bg-[#F4F1FF] border-[#6334E8] text-[#17143A]'
-                      : 'bg-white border-[#DDD9F5] text-[#64748B]'
+                      ? 'bg-[#F4F1FF] dark:bg-[#8B5CF6]/22 border-[#6334E8] dark:border-[#A78BFA] text-[#17143A] dark:text-[#F4F2FF]'
+                      : 'bg-white dark:bg-[#171133]/75 border-[#DDD9F5] dark:border-white/12 text-[#64748B] dark:text-[#A49EC6]'
                   }`}
                 >
                   <div className="flex items-center gap-1.5 text-xs font-semibold">
-                    <EyeOff className="w-3.5 h-3.5 text-[#6334E8]" />
+                    <EyeOff className="w-3.5 h-3.5 text-[#6334E8] dark:text-[#C4B5FD]" />
                     <span>Anonymous</span>
                   </div>
                   <p className="text-[11px] mt-1 leading-tight">Hidden from host & exports</p>
@@ -531,7 +531,7 @@ export function AssessmentBuilder({
             {isQuiz ? (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#17143A] mb-1">
+                  <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">
                     Duration (min)
                   </label>
                   <input
@@ -543,13 +543,13 @@ export function AssessmentBuilder({
                       setDurationMinutes(Math.max(1, Number(e.target.value) || 1));
                       setDirty(true);
                     }}
-                    className="w-full rounded-xl bg-white border border-[#DDD9F5] px-3 py-2 text-sm font-mono tabular-nums"
+                    className="tp-input w-full rounded-xl px-3 py-2 text-sm font-mono tabular-nums text-[#17143A] dark:text-[#F4F2FF]"
                   />
                 </div>
 
                 <div className="flex flex-col justify-end space-y-2 pb-1">
                   {privacyMode === 'anonymous' && (
-                    <label className="inline-flex items-center gap-2 text-xs text-[#17143A] cursor-pointer">
+                    <label className="inline-flex items-center gap-2 text-xs text-[#17143A] dark:text-[#E5E0FF] cursor-pointer">
                       <input
                         type="checkbox"
                         checked={allowAlias}
@@ -557,12 +557,12 @@ export function AssessmentBuilder({
                           setAllowAlias(e.target.checked);
                           setDirty(true);
                         }}
-                        className="rounded border-[#DDD9F5] text-[#6334E8]"
+                        className="rounded border-[#DDD9F5] dark:border-white/25 text-[#6334E8] accent-[#7C3AED]"
                       />
                       <span>Allow optional alias</span>
                     </label>
                   )}
-                  <label className="inline-flex items-center gap-2 text-xs text-[#17143A] cursor-pointer">
+                  <label className="inline-flex items-center gap-2 text-xs text-[#17143A] dark:text-[#E5E0FF] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showMarksToStudents}
@@ -570,7 +570,7 @@ export function AssessmentBuilder({
                         setShowMarksToStudents(e.target.checked);
                         setDirty(true);
                       }}
-                      className="rounded border-[#DDD9F5] text-[#6334E8]"
+                      className="rounded border-[#DDD9F5] dark:border-white/25 text-[#6334E8] accent-[#7C3AED]"
                     />
                     <span>Show per-question marks</span>
                   </label>
@@ -579,7 +579,7 @@ export function AssessmentBuilder({
             ) : (
               <div className="space-y-2 pt-1">
                 {privacyMode === 'anonymous' && (
-                  <label className="inline-flex items-center gap-2 text-xs text-[#17143A] cursor-pointer">
+                  <label className="inline-flex items-center gap-2 text-xs text-[#17143A] dark:text-[#E5E0FF] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={allowAlias}
@@ -587,12 +587,12 @@ export function AssessmentBuilder({
                         setAllowAlias(e.target.checked);
                         setDirty(true);
                       }}
-                      className="rounded border-[#DDD9F5] text-[#6334E8]"
+                      className="rounded border-[#DDD9F5] dark:border-white/25 text-[#6334E8] accent-[#7C3AED]"
                     />
                     <span>Allow optional alias</span>
                   </label>
                 )}
-                <p className="text-[11px] text-[#55587D]">
+                <p className="text-[11px] text-[#55587D] dark:text-[#A49EC6]">
                   Polls stay open until you manually end the live session.
                 </p>
               </div>
@@ -605,13 +605,13 @@ export function AssessmentBuilder({
       <div className="space-y-4">
         {questions.map((q, idx) => (
           <div key={idx} className="tp-surface rounded-2xl p-5 sm:p-6 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#ECE9FA]">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#ECE9FA] dark:border-white/10">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="font-mono text-xs font-bold text-[#6334E8]">Question {idx + 1}</span>
+                <span className="font-mono text-xs font-bold text-[#6334E8] dark:text-[#C4B5FD]">Question {idx + 1}</span>
                 <select
                   value={q.type}
                   onChange={(e) => updateQuestion(idx, { type: e.target.value as QuestionType })}
-                  className="rounded-xl border border-[#DDD9F5] bg-[#FAF9FF] px-3 py-1.5 text-xs font-semibold text-[#17143A]"
+                  className="tp-input rounded-xl px-3 py-1.5 text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF]"
                 >
                   <option value="mcq">{isQuiz ? 'Multiple Choice (MCQ)' : 'Single-Choice Poll'}</option>
                   <option value="multi_select">Multiple Select</option>
@@ -621,7 +621,7 @@ export function AssessmentBuilder({
 
                 {isQuiz && (
                   <div className="flex items-center gap-1.5">
-                    <label className="text-xs text-[#64748B]">Marks:</label>
+                    <label className="text-xs text-[#64748B] dark:text-[#A49EC6]">Marks:</label>
                     <input
                       type="number"
                       min={0}
@@ -630,13 +630,13 @@ export function AssessmentBuilder({
                       onChange={(e) =>
                         updateQuestion(idx, { points: Math.max(0, Number(e.target.value) || 0) })
                       }
-                      className="w-20 rounded-xl border border-[#DDD9F5] px-2.5 py-1 text-xs font-mono tabular-nums"
+                      className="tp-input w-20 rounded-xl px-2.5 py-1 text-xs font-mono tabular-nums text-[#17143A] dark:text-[#F4F2FF]"
                     />
                   </div>
                 )}
 
                 {isQuiz && q.type === 'multi_select' && (
-                  <label className="inline-flex items-center gap-1.5 text-xs text-[#4B4772] cursor-pointer">
+                  <label className="inline-flex items-center gap-1.5 text-xs text-[#4B4772] dark:text-[#C5BFE4] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={Boolean(q.settings?.partialCredit)}
@@ -645,6 +645,7 @@ export function AssessmentBuilder({
                           settings: { ...q.settings, partialCredit: e.target.checked },
                         })
                       }
+                      className="accent-[#7C3AED]"
                     />
                     <span>Partial credit</span>
                   </label>
@@ -657,7 +658,7 @@ export function AssessmentBuilder({
                   disabled={idx === 0}
                   onClick={() => moveQuestion(idx, -1)}
                   aria-label="Move question up"
-                  className="p-1.5 rounded-lg text-[#64748B] hover:text-[#17143A] hover:bg-[#F4F1FF] disabled:opacity-35 cursor-pointer"
+                  className="p-1.5 rounded-lg text-[#64748B] dark:text-[#A49EC6] hover:text-[#17143A] dark:hover:text-white hover:bg-[#F4F1FF] dark:hover:bg-white/10 disabled:opacity-35 cursor-pointer"
                 >
                   <ArrowUp className="w-4 h-4" />
                 </button>
@@ -666,7 +667,7 @@ export function AssessmentBuilder({
                   disabled={idx === questions.length - 1}
                   onClick={() => moveQuestion(idx, 1)}
                   aria-label="Move question down"
-                  className="p-1.5 rounded-lg text-[#64748B] hover:text-[#17143A] hover:bg-[#F4F1FF] disabled:opacity-35 cursor-pointer"
+                  className="p-1.5 rounded-lg text-[#64748B] dark:text-[#A49EC6] hover:text-[#17143A] dark:hover:text-white hover:bg-[#F4F1FF] dark:hover:bg-white/10 disabled:opacity-35 cursor-pointer"
                 >
                   <ArrowDown className="w-4 h-4" />
                 </button>
@@ -675,7 +676,7 @@ export function AssessmentBuilder({
                   disabled={questions.length <= 1}
                   onClick={() => removeQuestion(idx)}
                   aria-label="Delete question"
-                  className="p-1.5 rounded-lg text-[#64748B] hover:text-rose-600 hover:bg-rose-50 disabled:opacity-35 cursor-pointer"
+                  className="p-1.5 rounded-lg text-[#64748B] dark:text-[#A49EC6] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 disabled:opacity-35 cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -688,14 +689,14 @@ export function AssessmentBuilder({
                 value={q.text}
                 onChange={(e) => updateQuestion(idx, { text: e.target.value })}
                 placeholder="Enter your question prompt..."
-                className="w-full rounded-xl bg-white border border-[#DDD9F5] px-3.5 py-2.5 text-sm text-[#17143A] focus:outline-none focus:ring-2 focus:ring-[#6334E8]/30"
+                className="tp-input w-full rounded-xl px-3.5 py-2.5 text-sm text-[#17143A] dark:text-[#F4F2FF]"
               />
             </div>
 
             {(q.type === 'mcq' || q.type === 'multi_select') && (
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-medium text-[#64748B]">
+                  <p className="text-xs font-medium text-[#64748B] dark:text-[#A49EC6]">
                     {isQuiz
                       ? q.type === 'mcq'
                         ? 'Options — mark the correct option(s)'
@@ -722,7 +723,7 @@ export function AssessmentBuilder({
                         className={`w-6 h-6 rounded-lg border flex items-center justify-center shrink-0 transition-colors cursor-pointer ${
                           opt.isCorrect
                             ? 'bg-emerald-600 border-emerald-600 text-white'
-                            : 'bg-white border-[#CBD5E1] text-transparent hover:border-[#6334E8]'
+                            : 'bg-white dark:bg-[#171133] border-[#CBD5E1] dark:border-white/20 text-transparent hover:border-[#6334E8] dark:hover:border-[#A78BFA]'
                         }`}
                       >
                         <CheckCircle2 className="w-4 h-4" />
@@ -739,7 +740,7 @@ export function AssessmentBuilder({
                         updateQuestion(idx, { options: nextOpts });
                       }}
                       placeholder={`Option ${oIdx + 1}`}
-                      className="flex-1 rounded-xl bg-white border border-[#DDD9F5] px-3.5 py-2 text-sm text-[#17143A]"
+                      className="tp-input flex-1 rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                     />
 
                     <button
@@ -752,7 +753,7 @@ export function AssessmentBuilder({
                         updateQuestion(idx, { options: nextOpts });
                       }}
                       aria-label="Remove option"
-                      className="p-2 rounded-lg text-[#94A3B8] hover:text-rose-600 disabled:opacity-30 cursor-pointer"
+                      className="p-2 rounded-lg text-[#94A3B8] dark:text-[#8E88B0] hover:text-rose-600 dark:hover:text-rose-400 disabled:opacity-30 cursor-pointer"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -770,7 +771,7 @@ export function AssessmentBuilder({
                         ],
                       })
                     }
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6334E8] hover:text-[#4F46E5] pt-1 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6334E8] dark:text-[#C4B5FD] hover:text-[#4F46E5] dark:hover:text-[#DDD6FE] pt-1 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Add Option</span>
@@ -781,7 +782,7 @@ export function AssessmentBuilder({
 
             {isQuiz && (q.type === 'short_answer' || q.type === 'paragraph') && (
               <div>
-                <label className="block text-xs font-medium text-[#64748B] mb-1">
+                <label className="block text-xs font-medium text-[#64748B] dark:text-[#A49EC6] mb-1">
                   Reference answer / Grading rubric (visible only to hosts during review)
                 </label>
                 <textarea
@@ -789,7 +790,7 @@ export function AssessmentBuilder({
                   value={q.rubric || ''}
                   onChange={(e) => updateQuestion(idx, { rubric: e.target.value })}
                   placeholder="Key points expected for full marks..."
-                  className="w-full rounded-xl bg-[#FAF9FF] border border-[#DDD9F5] px-3.5 py-2 text-sm text-[#17143A]"
+                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 />
               </div>
             )}
@@ -802,7 +803,7 @@ export function AssessmentBuilder({
             setDirty(true);
             setQuestions((prev) => [...prev, createEmptyQuestion(type, prev.length)]);
           }}
-          className="w-full py-3.5 rounded-2xl border-2 border-dashed border-[#C7BDF2] hover:border-[#6334E8] bg-white/60 hover:bg-white text-sm font-semibold text-[#6334E8] flex items-center justify-center gap-2 transition-colors cursor-pointer"
+          className="w-full py-3.5 rounded-2xl border-2 border-dashed border-[#C7BDF2] dark:border-[#A78BFA]/35 hover:border-[#6334E8] dark:hover:border-[#C4B5FD] bg-white/60 dark:bg-[#191237]/50 hover:bg-white dark:hover:bg-[#23194D]/75 text-sm font-semibold text-[#6334E8] dark:text-[#C4B5FD] flex items-center justify-center gap-2 transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add Question</span>
@@ -812,36 +813,36 @@ export function AssessmentBuilder({
       {/* Student Preview Modal */}
       {previewOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/50 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/50 dark:bg-black/75 backdrop-blur-md p-4"
           role="dialog"
           aria-modal="true"
         >
           <div className="w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-[30px] tp-modal-glass">
             <div className="sticky top-0 tp-glass-bar px-6 py-4 flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-[#6334E8]">Student View Preview</p>
-                <h3 className="font-display font-bold text-lg text-[#17143A]">
+                <p className="text-xs font-semibold text-[#6334E8] dark:text-[#C4B5FD]">Student View Preview</p>
+                <h3 className="font-display font-bold text-lg text-[#17143A] dark:text-[#F4F2FF]">
                   {title || `Untitled ${isQuiz ? 'Quiz' : 'Poll'}`}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setPreviewOpen(false)}
-                className="p-2 rounded-xl hover:bg-[#F4F1FF] cursor-pointer"
+                className="p-2 rounded-xl text-[#4B4772] dark:text-[#C5BFE4] hover:bg-[#F4F1FF] dark:hover:bg-white/10 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-6 space-y-4">
-              {description && <p className="text-sm text-[#4B4772]">{description}</p>}
+              {description && <p className="text-sm text-[#4B4772] dark:text-[#C5BFE4]">{description}</p>}
               {questions.map((q, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-[#DDD9F5] p-5 space-y-3">
+                <div key={i} className="bg-white dark:bg-[#171133]/85 rounded-2xl border border-[#DDD9F5] dark:border-white/12 p-5 space-y-3">
                   <div className="flex justify-between gap-3">
-                    <p className="font-semibold text-sm text-[#17143A]">
+                    <p className="font-semibold text-sm text-[#17143A] dark:text-[#F4F2FF]">
                       {i + 1}. {q.text || '(Question text empty)'}
                     </p>
                     {isQuiz && showMarksToStudents && (
-                      <span className="font-mono text-xs text-[#6334E8] shrink-0">
+                      <span className="font-mono text-xs text-[#6334E8] dark:text-[#C4B5FD] shrink-0">
                         {q.points} marks
                       </span>
                     )}
@@ -851,14 +852,14 @@ export function AssessmentBuilder({
                       {q.options.map((o, oi) => (
                         <div
                           key={oi}
-                          className="px-3.5 py-2 rounded-xl border border-[#ECE9FA] text-sm text-[#4B4772]"
+                          className="px-3.5 py-2 rounded-xl border border-[#ECE9FA] dark:border-white/10 bg-white/70 dark:bg-white/5 text-sm text-[#4B4772] dark:text-[#E5E0FF]"
                         >
                           {o.label || `(Option ${oi + 1})`}
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="h-12 rounded-xl border border-[#ECE9FA] bg-[#FAF9FF] px-3 py-2 text-xs text-[#94A3B8]">
+                    <div className="h-12 rounded-xl border border-[#ECE9FA] dark:border-white/10 bg-[#FAF9FF] dark:bg-white/5 px-3 py-2 text-xs text-[#94A3B8] dark:text-[#8E88B0]">
                       Student written response field
                     </div>
                   )}

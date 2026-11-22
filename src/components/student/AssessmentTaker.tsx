@@ -12,6 +12,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { ThemeToggle } from '../common/ThemeToggle.tsx';
 import { apiRequest } from '../../services/api.ts';
 import type { PublicSessionDTO } from '../../../shared/types.ts';
 
@@ -175,14 +176,17 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
   if (stage === 'instructions') {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <button
-          type="button"
-          onClick={onExit}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6334E8] hover:text-[#4F46E5] mb-5 cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Student Portal
-        </button>
+        <div className="flex items-center justify-between gap-3 mb-5">
+          <button
+            type="button"
+            onClick={onExit}
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6334E8] dark:text-[#C4B5FD] hover:text-[#4F46E5] dark:hover:text-white cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Student Portal
+          </button>
+          <ThemeToggle compact />
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -191,10 +195,10 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
           className="tp-glass rounded-[30px] p-6 sm:p-8 space-y-6"
         >
           <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#5B617A]">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#5B617A] dark:text-[#A49EC6]">
               <span>{isQuiz ? 'Quiz Session' : 'Live Poll'}</span>
               <span aria-hidden="true">·</span>
-              <span className="font-mono font-semibold text-[#6334E8]">Code {session.joinCode}</span>
+              <span className="font-mono font-semibold text-[#6334E8] dark:text-[#C4B5FD]">Code {session.joinCode}</span>
               <span aria-hidden="true">·</span>
               <span>{session.questions.length} {session.questions.length === 1 ? 'question' : 'questions'}</span>
               {isQuiz && session.showMarksToStudents && (
@@ -204,24 +208,24 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
                 </>
               )}
             </div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17143A] mt-2">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17143A] dark:text-[#F4F2FF] mt-2">
               {session.title}
             </h1>
             {session.description && (
-              <p className="text-sm text-[#433E68] mt-2 leading-relaxed">{session.description}</p>
+              <p className="text-sm text-[#433E68] dark:text-[#C5BFE4] mt-2 leading-relaxed">{session.description}</p>
             )}
           </div>
 
           {session.instructions && (
-            <div className="rounded-2xl bg-white/60 border border-white/90 p-4">
-              <p className="text-xs font-semibold text-[#17143A] mb-1">Host instructions</p>
-              <p className="text-sm text-[#433E68] whitespace-pre-wrap">{session.instructions}</p>
+            <div className="rounded-2xl bg-white/60 dark:bg-white/6 border border-white/90 dark:border-white/12 p-4">
+              <p className="text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Host instructions</p>
+              <p className="text-sm text-[#433E68] dark:text-[#C5BFE4] whitespace-pre-wrap">{session.instructions}</p>
             </div>
           )}
 
           {/* Explicit Privacy Mode Boundary Disclosure */}
-          <div className="rounded-2xl bg-white/65 border border-white/90 p-4 flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#6334E8]/12 text-[#6334E8] flex items-center justify-center shrink-0">
+          <div className="rounded-2xl bg-white/65 dark:bg-white/6 border border-white/90 dark:border-white/12 p-4 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#6334E8]/12 dark:bg-[#8B5CF6]/20 text-[#6334E8] dark:text-[#C4B5FD] flex items-center justify-center shrink-0">
               {session.privacyMode === 'anonymous' ? (
                 <EyeOff className="w-4 h-4" />
               ) : (
@@ -229,12 +233,12 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
               )}
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-[#17143A]">
+              <p className="text-sm font-semibold text-[#17143A] dark:text-[#F4F2FF]">
                 {session.privacyMode === 'anonymous'
                   ? 'Anonymous Mode — Identity hidden from Host'
                   : 'Normal Mode — Linked to your Student Profile'}
               </p>
-              <p className="text-xs text-[#5B617A] leading-relaxed">
+              <p className="text-xs text-[#5B617A] dark:text-[#A49EC6] leading-relaxed">
                 {session.privacyMode === 'anonymous'
                   ? 'A random anonymous ID will be generated for your response. Your name, email, and student ID are never exposed to the host in dashboards, Data Retrieval, or CSV exports. You can still view your own result privately inside your portal.'
                   : 'Your name, email, and individual responses will be recorded against your student profile and visible to authorized hosts in your institution.'}
@@ -244,7 +248,7 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
 
           {session.privacyMode === 'anonymous' && session.allowAlias && (
             <div>
-              <label htmlFor="anon-alias" className="block text-sm font-medium text-[#17143A] mb-1.5">
+              <label htmlFor="anon-alias" className="block text-sm font-medium text-[#17143A] dark:text-[#F4F2FF] mb-1.5">
                 Optional display alias (visible to host alongside your random anonymous ID)
               </label>
               <input
@@ -254,22 +258,22 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
                 value={alias}
                 onChange={(e) => setAlias(e.target.value)}
                 placeholder="Leave blank to remain purely anonymous"
-                className="tp-input w-full rounded-xl px-3.5 py-2.5 text-sm text-[#17143A]"
+                className="tp-input w-full rounded-xl px-3.5 py-2.5 text-sm text-[#17143A] dark:text-[#F4F2FF]"
               />
             </div>
           )}
 
           {error && (
-            <div role="alert" className="flex items-start gap-2 rounded-2xl bg-rose-50/90 border border-rose-200 p-3.5 text-sm text-rose-800">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div role="alert" className="flex items-start gap-2 rounded-2xl bg-rose-50/90 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 p-3.5 text-sm text-rose-800 dark:text-rose-200">
+              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           {session.alreadySubmitted && session.existingSubmissionId ? (
-            <div className="rounded-2xl bg-emerald-50/90 border border-emerald-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-sm text-emerald-900 font-medium">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <div className="rounded-2xl bg-emerald-50/90 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-400/30 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm text-emerald-900 dark:text-emerald-200 font-medium">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <span>You have already submitted a response for this session.</span>
               </div>
               <button
@@ -281,9 +285,9 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
               </button>
             </div>
           ) : (
-            <div className="flex items-center justify-between pt-3 border-t border-[#17143A]/8">
-              <div className="flex items-center gap-2 text-sm text-[#433E68]">
-                <Clock className="w-4 h-4 text-[#6334E8]" />
+            <div className="flex items-center justify-between pt-3 border-t border-[#17143A]/8 dark:border-white/10">
+              <div className="flex items-center gap-2 text-sm text-[#433E68] dark:text-[#C5BFE4]">
+                <Clock className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD]" />
                 {isQuiz ? (
                   <span className="font-mono tabular-nums font-semibold">
                     {formatTimer(remainingSec)} remaining
@@ -313,29 +317,29 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
       <div className="sticky top-3 z-30 tp-glass rounded-2xl px-4 sm:px-6 py-3.5 space-y-2.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="font-display font-bold text-base sm:text-lg text-[#17143A] truncate">
+            <h1 className="font-display font-bold text-base sm:text-lg text-[#17143A] dark:text-[#F4F2FF] truncate">
               {session.title}
             </h1>
-            <div className="flex items-center gap-2 text-xs text-[#5B617A] mt-0.5">
+            <div className="flex items-center gap-2 text-xs text-[#5B617A] dark:text-[#A49EC6] mt-0.5">
               <span className="tabular-nums font-medium">
                 {answeredCount} of {session.questions.length} answered ({completionPct}%)
               </span>
               {anonId && (
                 <>
                   <span aria-hidden="true">·</span>
-                  <span className="font-mono text-[#6334E8] font-semibold">{anonId}</span>
+                  <span className="font-mono text-[#6334E8] dark:text-[#C4B5FD] font-semibold">{anonId}</span>
                 </>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
             {isQuiz && (
               <div
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border font-mono text-sm font-bold tabular-nums ${
                   remainingSec <= 60
-                    ? 'bg-rose-50/90 border-rose-300 text-rose-700'
-                    : 'bg-white/80 border-white/95 text-[#17143A] shadow-xs'
+                    ? 'bg-rose-50/90 dark:bg-rose-950/70 border-rose-300 dark:border-rose-400/40 text-rose-700 dark:text-rose-200'
+                    : 'bg-white/80 dark:bg-white/10 border-white/95 dark:border-white/15 text-[#17143A] dark:text-[#F4F2FF] shadow-xs'
                 }`}
                 aria-label="Time remaining"
               >
@@ -343,6 +347,7 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
                 <span>{formatTimer(remainingSec)}</span>
               </div>
             )}
+            <ThemeToggle compact />
             <button
               type="button"
               disabled={submitting}
@@ -356,9 +361,9 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
         </div>
 
         {/* Integrated Smooth Completion Rail */}
-        <div className="h-1.5 rounded-full bg-white/75 overflow-hidden ring-1 ring-[#6334E8]/10">
+        <div className="h-1.5 rounded-full bg-white/75 dark:bg-white/12 overflow-hidden ring-1 ring-[#6334E8]/10 dark:ring-white/10">
           <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-[#6E3DF0] to-[#4F46E5]"
+            className="h-full rounded-full bg-gradient-to-r from-[#6E3DF0] to-[#4F46E5] dark:from-[#A78BFA] dark:to-[#6366F1]"
             initial={false}
             animate={{ scaleX: completionPct / 100 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
@@ -368,8 +373,8 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
       </div>
 
       {error && (
-        <div role="alert" className="flex items-start gap-2.5 rounded-2xl bg-rose-50/90 border border-rose-200 p-4 text-sm text-rose-800">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+        <div role="alert" className="flex items-start gap-2.5 rounded-2xl bg-rose-50/90 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 p-4 text-sm text-rose-800 dark:text-rose-200">
+          <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>
       )}
@@ -382,8 +387,8 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
             <div key={q.id} className="tp-surface rounded-[24px] p-5 sm:p-6 space-y-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1">
-                  <div className="text-xs font-medium text-[#5B617A] flex items-center gap-2">
-                    <span className="font-mono font-semibold text-[#6334E8]">Q{idx + 1}</span>
+                  <div className="text-xs font-medium text-[#5B617A] dark:text-[#A49EC6] flex items-center gap-2">
+                    <span className="font-mono font-semibold text-[#6334E8] dark:text-[#C4B5FD]">Q{idx + 1}</span>
                     <span aria-hidden="true">·</span>
                     <span>
                       {q.type === 'mcq'
@@ -395,12 +400,12 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
                         : 'Paragraph Response'}
                     </span>
                   </div>
-                  <h2 className="font-display font-semibold text-base text-[#17143A] leading-snug">
+                  <h2 className="font-display font-semibold text-base text-[#17143A] dark:text-[#F4F2FF] leading-snug">
                     {q.text}
                   </h2>
                 </div>
                 {isQuiz && session.showMarksToStudents && (
-                  <span className="text-xs font-mono font-semibold text-[#6334E8] whitespace-nowrap shrink-0 tabular-nums">
+                  <span className="text-xs font-mono font-semibold text-[#6334E8] dark:text-[#C4B5FD] whitespace-nowrap shrink-0 tabular-nums">
                     {q.points} {q.points === 1 ? 'mark' : 'marks'}
                   </span>
                 )}
@@ -417,8 +422,8 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
                         onClick={() => toggleOption(q.id, opt.id, q.type === 'multi_select')}
                         className={`w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all cursor-pointer ${
                           selected
-                            ? 'bg-[#6334E8]/10 border-[#6334E8] text-[#17143A] shadow-xs'
-                            : 'bg-white/70 border-white/90 hover:bg-white/95 hover:border-[#6334E8]/35 text-[#17143A]'
+                            ? 'bg-[#6334E8]/10 dark:bg-[#8B5CF6]/25 border-[#6334E8] dark:border-[#A78BFA] text-[#17143A] dark:text-white shadow-xs'
+                            : 'bg-white/70 dark:bg-white/5 border-white/90 dark:border-white/12 hover:bg-white/95 dark:hover:bg-white/10 hover:border-[#6334E8]/35 dark:hover:border-[#A78BFA]/45 text-[#17143A] dark:text-[#E5E0FF]'
                         }`}
                       >
                         <span
@@ -426,8 +431,8 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
                             q.type === 'mcq' ? 'rounded-full' : 'rounded-md'
                           } ${
                             selected
-                              ? 'border-[#6334E8] bg-[#6334E8] text-white'
-                              : 'border-[#94A3B8] bg-white'
+                              ? 'border-[#6334E8] dark:border-[#A78BFA] bg-[#6334E8] dark:bg-[#8B5CF6] text-white'
+                              : 'border-[#94A3B8] dark:border-[#6F6998] bg-white dark:bg-[#171133]'
                           }`}
                         >
                           {selected && <Check className="w-3 h-3 stroke-[3]" />}
@@ -445,7 +450,7 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
                   value={current.textAnswer}
                   onChange={(e) => setTextResponse(q.id, e.target.value)}
                   placeholder="Type your short answer..."
-                  className="tp-input w-full rounded-xl px-4 py-2.5 text-sm text-[#17143A]"
+                  className="tp-input w-full rounded-xl px-4 py-2.5 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 />
               )}
 
@@ -455,7 +460,7 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
                   value={current.textAnswer}
                   onChange={(e) => setTextResponse(q.id, e.target.value)}
                   placeholder="Write your detailed response..."
-                  className="tp-input w-full rounded-xl px-4 py-3 text-sm text-[#17143A]"
+                  className="tp-input w-full rounded-xl px-4 py-3 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 />
               )}
             </div>
@@ -465,8 +470,8 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
 
       {/* Bottom Submit Action */}
       <div className="tp-glass rounded-2xl px-5 py-4 flex flex-wrap items-center justify-between gap-3">
-        <span className="text-xs text-[#433E68] flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-[#6334E8]" />
+        <span className="text-xs text-[#433E68] dark:text-[#C5BFE4] flex items-center gap-1.5">
+          <ShieldCheck className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD]" />
           Answers are immutable once submitted.
         </span>
         <button
@@ -486,7 +491,7 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/45 backdrop-blur-md p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/45 dark:bg-black/65 backdrop-blur-md p-4"
             role="dialog"
             aria-modal="true"
           >
@@ -497,22 +502,22 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
               transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
               className="w-full max-w-md rounded-3xl tp-modal-glass p-6 space-y-4"
             >
-              <h3 className="font-display font-bold text-lg text-[#17143A]">
+              <h3 className="font-display font-bold text-lg text-[#17143A] dark:text-[#F4F2FF]">
                 Confirm {isQuiz ? 'Quiz' : 'Poll'} Submission
               </h3>
-              <p className="text-sm text-[#433E68] leading-relaxed">
+              <p className="text-sm text-[#433E68] dark:text-[#C5BFE4] leading-relaxed">
                 You have answered{' '}
-                <strong className="text-[#17143A] tabular-nums">
+                <strong className="text-[#17143A] dark:text-[#F4F2FF] tabular-nums">
                   {answeredCount} of {session.questions.length}
                 </strong>{' '}
                 questions. Once submitted, responses cannot be modified.
               </p>
-              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#17143A]/8">
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#17143A]/8 dark:border-white/10">
                 <button
                   type="button"
                   disabled={submitting}
                   onClick={() => setConfirmOpen(false)}
-                  className="tp-glass-btn px-4 py-2 rounded-xl text-sm font-semibold text-[#17143A] cursor-pointer"
+                  className="tp-glass-btn px-4 py-2 rounded-xl text-sm font-semibold text-[#17143A] dark:text-[#F4F2FF] cursor-pointer"
                 >
                   Review Answers
                 </button>

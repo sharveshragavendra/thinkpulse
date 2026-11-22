@@ -31,7 +31,7 @@ export function ConfirmDialog({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.16 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/45 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/45 dark:bg-black/65 backdrop-blur-md p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="tp-confirm-title"
@@ -51,34 +51,34 @@ export function ConfirmDialog({
                 <div
                   className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
                     tone === 'danger'
-                      ? 'bg-rose-500/12 text-rose-600 ring-1 ring-rose-500/20'
-                      : 'bg-[#6334E8]/12 text-[#6334E8] ring-1 ring-[#6334E8]/20'
+                      ? 'bg-rose-500/12 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 ring-1 ring-rose-500/20 dark:ring-rose-400/30'
+                      : 'bg-[#6334E8]/12 dark:bg-[#8B5CF6]/20 text-[#6334E8] dark:text-[#C4B5FD] ring-1 ring-[#6334E8]/20 dark:ring-[#A78BFA]/30'
                   }`}
                 >
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 id="tp-confirm-title" className="font-display font-bold text-base text-[#17143A]">
+                  <h3 id="tp-confirm-title" className="font-display font-bold text-base text-[#17143A] dark:text-[#F4F2FF]">
                     {title}
                   </h3>
-                  <p className="text-sm text-[#433E68] mt-1 leading-relaxed">{description}</p>
+                  <p className="text-sm text-[#433E68] dark:text-[#C5BFE4] mt-1 leading-relaxed">{description}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={onCancel}
                 aria-label="Close confirmation dialog"
-                className="p-1.5 rounded-xl text-[#5B617A] hover:text-[#17143A] hover:bg-white/80 transition-colors cursor-pointer"
+                className="p-1.5 rounded-xl text-[#5B617A] dark:text-[#A49EC6] hover:text-[#17143A] dark:hover:text-white hover:bg-white/80 dark:hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#17143A]/8">
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#17143A]/8 dark:border-white/10">
               <button
                 type="button"
                 onClick={onCancel}
-                className="tp-glass-btn px-4 py-2 rounded-xl text-xs font-semibold text-[#433E68] cursor-pointer"
+                className="tp-glass-btn px-4 py-2 rounded-xl text-xs font-semibold text-[#433E68] dark:text-[#E5E0FF] cursor-pointer"
               >
                 {cancelLabel}
               </button>

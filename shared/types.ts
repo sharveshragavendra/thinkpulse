@@ -10,6 +10,25 @@ export type GradingOutcome = 'correct' | 'partial' | 'incorrect' | 'pending';
 export type ServerEnvironment = 'development' | 'staging' | 'production';
 export type ServerHealthStatus = 'unknown' | 'healthy' | 'degraded' | 'unreachable';
 
+export interface AddedHostEntry {
+  email: string;
+  displayName?: string | null;
+  addedByEmail: string;
+  addedAt: string;
+}
+
+export interface HostAccessRecordDTO {
+  email: string;
+  displayName: string;
+  role: 'platform_admin' | 'host';
+  isPrimary: boolean;
+  hasSignedIn: boolean;
+  status: string;
+  addedByEmail: string | null;
+  addedAt: string | null;
+  isCurrentUser: boolean;
+}
+
 export interface InstitutionInfo {
   id: string;
   name: string;
@@ -19,6 +38,7 @@ export interface InstitutionInfo {
     allowStudentSelfRegistration?: boolean;
     defaultPrivacyMode?: PrivacyMode;
     graceWindowSeconds?: number;
+    addedHosts?: AddedHostEntry[];
   };
 }
 

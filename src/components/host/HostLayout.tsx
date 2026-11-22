@@ -16,6 +16,7 @@ import {
   Server,
   Settings,
   User,
+  UserPlus,
   Users,
   X,
   Zap,
@@ -23,6 +24,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import { AmbientCanvas } from '../common/AmbientCanvas.tsx';
 import { BrandMark } from '../common/BrandMark.tsx';
+import { ThemeToggle } from '../common/ThemeToggle.tsx';
 import { HostOverview } from './HostOverview.tsx';
 import { AssessmentManager } from './AssessmentManager.tsx';
 import { AssessmentBuilder } from './AssessmentBuilder.tsx';
@@ -33,6 +35,7 @@ import { SessionsView } from './SessionsView.tsx';
 import { StudentDatabaseView } from './StudentDatabaseView.tsx';
 import { DataRetrievalView } from './DataRetrievalView.tsx';
 import { ServerManagementView } from './ServerManagementView.tsx';
+import { HostManagementView } from './HostManagementView.tsx';
 import { AuditLogsView, SettingsView } from './AuditAndSettingsViews.tsx';
 import { LaunchSessionModal } from './LaunchSessionModal.tsx';
 import { useAuth } from '../../context/AuthContext.tsx';
@@ -49,6 +52,7 @@ type NavTab =
   | 'quiz-analytics'
   | 'poll-analytics'
   | 'history'
+  | 'hosts'
   | 'servers'
   | 'audit'
   | 'settings';
@@ -129,6 +133,7 @@ export function HostLayout() {
     {
       label: 'Administration',
       items: [
+        { id: 'hosts', label: 'Host Access', icon: UserPlus },
         ...(canManageServers ? [{ id: 'servers' as NavTab, label: 'Server Management', icon: Server }] : []),
         { id: 'audit', label: 'Audit Logs', icon: ScrollText },
         { id: 'settings', label: 'Settings', icon: Settings },
@@ -206,7 +211,7 @@ export function HostLayout() {
                   onClick={() => handleSelectTab(item.id)}
                   className={`relative w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13.5px] font-medium transition-colors whitespace-nowrap cursor-pointer ${
                     isCurrent
-                      ? 'text-[#5B21B6] font-semibold'
+                      ? 'text-[#5B21B6] dark:text-white font-semibold'
                       : 'text-white/90 hover:bg-white/15 hover:text-white'
                   }`}
                 >
@@ -219,7 +224,7 @@ export function HostLayout() {
                   )}
                   <Icon
                     className={`w-[17px] h-[17px] shrink-0 relative z-10 ${
-                      isCurrent ? 'text-[#7C3AED]' : 'text-purple-200'
+                      isCurrent ? 'text-[#7C3AED] dark:text-[#E9D5FF]' : 'text-purple-200'
                     }`}
                   />
                   <span className="truncate relative z-10">{item.label}</span>
@@ -238,7 +243,7 @@ export function HostLayout() {
           className="w-full text-left flex items-center gap-2.5 px-3 py-2.5 rounded-[20px] bg-white/12 border border-white/22 hover:bg-white/18 backdrop-blur-md transition-colors cursor-pointer"
         >
           <div
-            className="w-9 h-9 rounded-full bg-white/95 text-[#6D28D9] font-display font-bold text-xs flex items-center justify-center shrink-0 shadow-xs"
+            className="w-9 h-9 rounded-full bg-white/95 dark:bg-[#23194D] text-[#6D28D9] dark:text-[#E9D5FF] border border-transparent dark:border-white/15 font-display font-bold text-xs flex items-center justify-center shrink-0 shadow-xs"
             aria-hidden="true"
           >
             {initials}
@@ -298,7 +303,7 @@ export function HostLayout() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-[#1E1042]/45 backdrop-blur-sm"
+              className="fixed inset-0 bg-[#1E1042]/45 dark:bg-black/70 backdrop-blur-sm"
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.aside
@@ -322,17 +327,17 @@ export function HostLayout() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden tp-glass-btn p-2 rounded-full text-[#0F1035] cursor-pointer"
+              className="lg:hidden tp-glass-btn p-2 rounded-full text-[#0F1035] dark:text-[#F4F2FF] cursor-pointer"
               aria-label="Open navigation menu"
             >
               <Menu className="w-4 h-4" />
             </button>
             <div className="flex items-center gap-2 text-sm min-w-0">
-              <span className="text-[#3E3963] font-medium hidden sm:inline truncate">
+              <span className="text-[#3E3963] dark:text-[#C5BFE4] font-medium hidden sm:inline truncate">
                 {user?.institutionName || 'ThinkPulse'}
               </span>
-              <span className="text-[#8B87A8] hidden sm:inline" aria-hidden="true">/</span>
-              <span className="font-display font-bold text-[#7C3AED] truncate">
+              <span className="text-[#8B87A8] dark:text-[#8E88B0] hidden sm:inline" aria-hidden="true">/</span>
+              <span className="font-display font-bold text-[#7C3AED] dark:text-[#C4B5FD] truncate">
                 {currentBreadcrumb}
               </span>
             </div>
@@ -350,12 +355,14 @@ export function HostLayout() {
               </button>
             )}
 
+            <ThemeToggle compact />
+
             <button
               type="button"
               onClick={() => handleSelectTab('audit')}
               title="Institutional audit activity"
               aria-label="View institutional audit logs"
-              className="w-9 h-9 rounded-full tp-glass-btn flex items-center justify-center text-[#1E1B4B] cursor-pointer"
+              className="w-9 h-9 rounded-full tp-glass-btn flex items-center justify-center text-[#1E1B4B] dark:text-[#E9D5FF] cursor-pointer"
             >
               <Bell className="w-4 h-4" />
             </button>
@@ -366,12 +373,12 @@ export function HostLayout() {
                 onClick={() => setAccountMenuOpen((open) => !open)}
                 aria-expanded={accountMenuOpen}
                 aria-label="Account menu"
-                className="h-9 pl-1.5 pr-2.5 rounded-full tp-glass-btn inline-flex items-center gap-1.5 text-[#1E1B4B] cursor-pointer"
+                className="h-9 pl-1.5 pr-2.5 rounded-full tp-glass-btn inline-flex items-center gap-1.5 text-[#1E1B4B] dark:text-[#F4F2FF] cursor-pointer"
               >
-                <span className="w-7 h-7 rounded-full bg-[#7C3AED]/14 text-[#6D28D9] flex items-center justify-center">
+                <span className="w-7 h-7 rounded-full bg-[#7C3AED]/14 dark:bg-[#8B5CF6]/28 text-[#6D28D9] dark:text-[#E9D5FF] flex items-center justify-center">
                   <User className="w-3.5 h-3.5" />
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#55587D]" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#55587D] dark:text-[#A49EC6]" />
               </button>
 
               <AnimatePresence>
@@ -383,23 +390,31 @@ export function HostLayout() {
                     transition={{ duration: 0.14 }}
                     className="absolute right-0 mt-2 w-60 tp-modal-glass rounded-[22px] p-2 z-40"
                   >
-                    <div className="px-3 py-2 border-b border-[#17143A]/8">
-                      <p className="text-xs font-bold text-[#0F1035] truncate">{user?.displayName}</p>
-                      <p className="text-[11px] text-[#55587D] truncate">{user?.email}</p>
+                    <div className="px-3 py-2 border-b border-[#17143A]/8 dark:border-white/10">
+                      <p className="text-xs font-bold text-[#0F1035] dark:text-[#F4F2FF] truncate">{user?.displayName}</p>
+                      <p className="text-[11px] text-[#55587D] dark:text-[#A49EC6] truncate">{user?.email}</p>
                     </div>
                     <div className="pt-1.5 space-y-1">
                       <button
                         type="button"
-                        onClick={() => handleSelectTab('settings')}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-[#1E1B4B] hover:bg-white/75 cursor-pointer"
+                        onClick={() => handleSelectTab('hosts')}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-[#1E1B4B] dark:text-[#E5E0FF] hover:bg-white/75 dark:hover:bg-white/10 cursor-pointer"
                       >
-                        <Settings className="w-3.5 h-3.5 text-[#7C3AED]" />
+                        <UserPlus className="w-3.5 h-3.5 text-[#7C3AED] dark:text-[#C4B5FD]" />
+                        <span>Add / Manage Hosts</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSelectTab('settings')}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-[#1E1B4B] dark:text-[#E5E0FF] hover:bg-white/75 dark:hover:bg-white/10 cursor-pointer"
+                      >
+                        <Settings className="w-3.5 h-3.5 text-[#7C3AED] dark:text-[#C4B5FD]" />
                         <span>Workspace Settings</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => void logout()}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-700 hover:bg-rose-50/80 cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-700 dark:text-rose-300 hover:bg-rose-50/80 dark:hover:bg-rose-950/60 cursor-pointer"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         <span>Sign Out</span>
@@ -499,6 +514,8 @@ export function HostLayout() {
               <QuizAnalyticsView initialAssessmentId={analyticsTargetId} refreshTick={refreshTick} />
             ) : activeTab === 'poll-analytics' ? (
               <PollAnalyticsView initialAssessmentId={analyticsTargetId} refreshTick={refreshTick} />
+            ) : activeTab === 'hosts' ? (
+              <HostManagementView refreshTick={refreshTick} />
             ) : activeTab === 'servers' ? (
               <ServerManagementView />
             ) : activeTab === 'audit' ? (

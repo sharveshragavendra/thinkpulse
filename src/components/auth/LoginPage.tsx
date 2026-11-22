@@ -12,6 +12,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import { AmbientCanvas } from '../common/AmbientCanvas.tsx';
 import { BrandMark } from '../common/BrandMark.tsx';
+import { ThemeToggle } from '../common/ThemeToggle.tsx';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { apiRequest } from '../../services/api.ts';
 
@@ -126,6 +127,11 @@ export function LoginPage() {
     <div className="min-h-screen tp-ambient-bg relative flex items-center justify-center p-4 sm:p-8 overflow-hidden">
       <AmbientCanvas />
 
+      {/* Floating Theme Switch */}
+      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-30">
+        <ThemeToggle />
+      </div>
+
       <motion.main
         initial={{ opacity: 0, y: 16, scale: 0.985 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -146,14 +152,14 @@ export function LoginPage() {
                   transition={{ duration: 0.2 }}
                   className="w-full mt-7"
                 >
-                  <h1 className="font-display text-[28px] font-bold text-[#0F1035] tracking-tight leading-tight">
+                  <h1 className="font-display text-[28px] font-bold text-[#0F1035] dark:text-[#F4F2FF] tracking-tight leading-tight">
                     Login
                   </h1>
-                  <p className="text-sm text-[#494B72] mt-1.5">
+                  <p className="text-sm text-[#494B72] dark:text-[#C5BFE4] mt-1.5">
                     Access your ThinkPulse account
                   </p>
                   {statusInfo?.institutionName && (
-                    <p className="text-xs font-medium text-[#6D28D9]/85 mt-1">
+                    <p className="text-xs font-medium text-[#6D28D9]/85 dark:text-[#C4B5FD] mt-1">
                       {statusInfo.institutionName}
                     </p>
                   )}
@@ -161,9 +167,9 @@ export function LoginPage() {
                   {error && (
                     <div
                       role="alert"
-                      className="mt-5 text-left flex items-start gap-2.5 rounded-2xl bg-rose-50/85 backdrop-blur-md border border-rose-200/90 px-4 py-3 text-xs text-rose-800"
+                      className="mt-5 text-left flex items-start gap-2.5 rounded-2xl bg-rose-50/85 dark:bg-rose-950/60 backdrop-blur-md border border-rose-200/90 dark:border-rose-400/30 px-4 py-3 text-xs text-rose-800 dark:text-rose-200"
                     >
-                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                       <span>{error}</span>
                     </div>
                   )}
@@ -171,9 +177,9 @@ export function LoginPage() {
                   {notice && (
                     <div
                       role="status"
-                      className="mt-5 text-left flex items-start gap-2.5 rounded-2xl bg-emerald-50/85 backdrop-blur-md border border-emerald-200/90 px-4 py-3 text-xs text-emerald-800"
+                      className="mt-5 text-left flex items-start gap-2.5 rounded-2xl bg-emerald-50/85 dark:bg-emerald-950/60 backdrop-blur-md border border-emerald-200/90 dark:border-emerald-400/30 px-4 py-3 text-xs text-emerald-800 dark:text-emerald-200"
                     >
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                       <span>{notice}</span>
                     </div>
                   )}
@@ -214,9 +220,9 @@ export function LoginPage() {
                     </button>
 
                     <div className="py-1 flex items-center gap-3">
-                      <div className="h-px flex-1 bg-[#17143A]/12" />
-                      <span className="text-xs font-medium text-[#55587D]">or</span>
-                      <div className="h-px flex-1 bg-[#17143A]/12" />
+                      <div className="h-px flex-1 bg-[#17143A]/12 dark:bg-white/15" />
+                      <span className="text-xs font-medium text-[#55587D] dark:text-[#A49EC6]">or</span>
+                      <div className="h-px flex-1 bg-[#17143A]/12 dark:bg-white/15" />
                     </div>
 
                     <button
@@ -226,14 +232,14 @@ export function LoginPage() {
                         setView('email');
                       }}
                       disabled={isWorking}
-                      className="tp-glass-btn w-full h-[50px] rounded-full text-[#0F1035] font-semibold text-sm px-5 flex items-center justify-center gap-2.5 disabled:opacity-60 cursor-pointer"
+                      className="tp-glass-btn w-full h-[50px] rounded-full text-[#0F1035] dark:text-[#F4F2FF] font-semibold text-sm px-5 flex items-center justify-center gap-2.5 disabled:opacity-60 cursor-pointer"
                     >
-                      <Mail className="w-4 h-4 text-[#6D28D9]" />
+                      <Mail className="w-4 h-4 text-[#6D28D9] dark:text-[#C4B5FD]" />
                       <span>Sign in with institutional email</span>
                     </button>
                   </div>
 
-                  <p className="mt-7 text-xs text-[#55587D] leading-relaxed">
+                  <p className="mt-7 text-xs text-[#55587D] dark:text-[#A49EC6] leading-relaxed">
                     Your workspace is routed automatically from your verified Google credentials.
                   </p>
                 </motion.div>
@@ -248,19 +254,19 @@ export function LoginPage() {
                   transition={{ duration: 0.2 }}
                   className="w-full mt-6"
                 >
-                  <h1 className="font-display text-[26px] font-bold text-[#0F1035] tracking-tight">
+                  <h1 className="font-display text-[26px] font-bold text-[#0F1035] dark:text-[#F4F2FF] tracking-tight">
                     Login
                   </h1>
-                  <p className="text-sm text-[#494B72] mt-1">
+                  <p className="text-sm text-[#494B72] dark:text-[#C5BFE4] mt-1">
                     Access your ThinkPulse account
                   </p>
 
                   {error && (
                     <div
                       role="alert"
-                      className="mt-5 text-left flex items-start gap-2.5 rounded-2xl bg-rose-50/85 backdrop-blur-md border border-rose-200/90 px-4 py-3 text-xs text-rose-800"
+                      className="mt-5 text-left flex items-start gap-2.5 rounded-2xl bg-rose-50/85 dark:bg-rose-950/60 backdrop-blur-md border border-rose-200/90 dark:border-rose-400/30 px-4 py-3 text-xs text-rose-800 dark:text-rose-200"
                     >
-                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                       <span>{error}</span>
                     </div>
                   )}
@@ -268,9 +274,9 @@ export function LoginPage() {
                   {notice && (
                     <div
                       role="status"
-                      className="mt-5 text-left flex items-start gap-2.5 rounded-2xl bg-emerald-50/85 backdrop-blur-md border border-emerald-200/90 px-4 py-3 text-xs text-emerald-800"
+                      className="mt-5 text-left flex items-start gap-2.5 rounded-2xl bg-emerald-50/85 dark:bg-emerald-950/60 backdrop-blur-md border border-emerald-200/90 dark:border-emerald-400/30 px-4 py-3 text-xs text-emerald-800 dark:text-emerald-200"
                     >
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                       <span>{notice}</span>
                     </div>
                   )}
@@ -280,7 +286,7 @@ export function LoginPage() {
                       <label htmlFor="tp-login-email" className="sr-only">
                         Email address
                       </label>
-                      <Mail className="w-4 h-4 text-[#55587D] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <Mail className="w-4 h-4 text-[#55587D] dark:text-[#A49EC6] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input
                         id="tp-login-email"
                         type="email"
@@ -289,7 +295,7 @@ export function LoginPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email address"
-                        className="tp-input w-full h-[50px] rounded-full pl-11 pr-4 text-sm text-[#0F1035] placeholder:text-[#6B6E94]"
+                        className="tp-input w-full h-[50px] rounded-full pl-11 pr-4 text-sm text-[#0F1035] dark:text-[#F4F2FF] placeholder:text-[#6B6E94] dark:placeholder:text-[#9A93BE]"
                       />
                     </div>
 
@@ -297,7 +303,7 @@ export function LoginPage() {
                       <label htmlFor="tp-login-password" className="sr-only">
                         Password
                       </label>
-                      <Lock className="w-4 h-4 text-[#55587D] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <Lock className="w-4 h-4 text-[#55587D] dark:text-[#A49EC6] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input
                         id="tp-login-password"
                         type={showPassword ? 'text' : 'password'}
@@ -306,13 +312,13 @@ export function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Password"
-                        className="tp-input w-full h-[50px] rounded-full pl-11 pr-11 text-sm text-[#0F1035] placeholder:text-[#6B6E94]"
+                        className="tp-input w-full h-[50px] rounded-full pl-11 pr-11 text-sm text-[#0F1035] dark:text-[#F4F2FF] placeholder:text-[#6B6E94] dark:placeholder:text-[#9A93BE]"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword((v) => !v)}
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#55587D] hover:text-[#0F1035] p-1 cursor-pointer"
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#55587D] dark:text-[#A49EC6] hover:text-[#0F1035] dark:hover:text-white p-1 cursor-pointer"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -326,7 +332,7 @@ export function LoginPage() {
                           setResetEmail(email);
                           setView('forgot');
                         }}
-                        className="text-xs font-semibold text-[#6D28D9] hover:text-[#4F46E5] cursor-pointer"
+                        className="text-xs font-semibold text-[#6D28D9] dark:text-[#C4B5FD] hover:text-[#4F46E5] dark:hover:text-white cursor-pointer"
                       >
                         Forgot password?
                       </button>
@@ -343,16 +349,16 @@ export function LoginPage() {
                   </form>
 
                   <div className="my-5 flex items-center gap-3">
-                    <div className="h-px flex-1 bg-[#17143A]/12" />
-                    <span className="text-xs font-medium text-[#55587D]">or</span>
-                    <div className="h-px flex-1 bg-[#17143A]/12" />
+                    <div className="h-px flex-1 bg-[#17143A]/12 dark:bg-white/15" />
+                    <span className="text-xs font-medium text-[#55587D] dark:text-[#A49EC6]">or</span>
+                    <div className="h-px flex-1 bg-[#17143A]/12 dark:bg-white/15" />
                   </div>
 
                   <button
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={isWorking}
-                    className="tp-glass-btn w-full h-[50px] rounded-full text-[#0F1035] font-semibold text-sm px-5 flex items-center justify-center gap-2.5 disabled:opacity-60 cursor-pointer"
+                    className="tp-glass-btn w-full h-[50px] rounded-full text-[#0F1035] dark:text-[#F4F2FF] font-semibold text-sm px-5 flex items-center justify-center gap-2.5 disabled:opacity-60 cursor-pointer"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
                       <path
@@ -393,23 +399,23 @@ export function LoginPage() {
                       setResetStage('request');
                       setView('email');
                     }}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6D28D9] hover:text-[#4F46E5] mb-4 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6D28D9] dark:text-[#C4B5FD] hover:text-[#4F46E5] dark:hover:text-white mb-4 cursor-pointer"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Back to login</span>
                   </button>
 
-                  <h1 className="font-display text-2xl font-bold text-[#0F1035]">
+                  <h1 className="font-display text-2xl font-bold text-[#0F1035] dark:text-[#F4F2FF]">
                     Password Recovery
                   </h1>
-                  <p className="text-xs text-[#55587D] mt-1 mb-5">
+                  <p className="text-xs text-[#55587D] dark:text-[#A49EC6] mt-1 mb-5">
                     Enter your institutional email address to issue a password recovery token.
                   </p>
 
                   {error && (
                     <div
                       role="alert"
-                      className="mb-4 rounded-2xl bg-rose-50/85 border border-rose-200 px-4 py-3 text-xs text-rose-800"
+                      className="mb-4 rounded-2xl bg-rose-50/85 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 px-4 py-3 text-xs text-rose-800 dark:text-rose-200"
                     >
                       {error}
                     </div>
@@ -417,7 +423,7 @@ export function LoginPage() {
                   {notice && (
                     <div
                       role="status"
-                      className="mb-4 rounded-2xl bg-emerald-50/85 border border-emerald-200 px-4 py-3 text-xs text-emerald-800"
+                      className="mb-4 rounded-2xl bg-emerald-50/85 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-400/30 px-4 py-3 text-xs text-emerald-800 dark:text-emerald-200"
                     >
                       {notice}
                     </div>
@@ -425,14 +431,14 @@ export function LoginPage() {
 
                   <form onSubmit={handleForgotSubmit} className="space-y-3.5">
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-[#55587D] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <Mail className="w-4 h-4 text-[#55587D] dark:text-[#A49EC6] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input
                         type="email"
                         required
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
                         placeholder="Email address"
-                        className="tp-input w-full h-[48px] rounded-full pl-11 pr-4 text-sm text-[#0F1035] placeholder:text-[#6B6E94]"
+                        className="tp-input w-full h-[48px] rounded-full pl-11 pr-4 text-sm text-[#0F1035] dark:text-[#F4F2FF] placeholder:text-[#6B6E94] dark:placeholder:text-[#9A93BE]"
                       />
                     </div>
 
@@ -444,7 +450,7 @@ export function LoginPage() {
                           value={resetToken}
                           onChange={(e) => setResetToken(e.target.value)}
                           placeholder="Recovery token"
-                          className="tp-input w-full h-[48px] rounded-full px-4 text-sm font-mono text-[#0F1035] placeholder:text-[#6B6E94]"
+                          className="tp-input w-full h-[48px] rounded-full px-4 text-sm font-mono text-[#0F1035] dark:text-[#F4F2FF] placeholder:text-[#6B6E94] dark:placeholder:text-[#9A93BE]"
                         />
                         <input
                           type="password"
@@ -453,7 +459,7 @@ export function LoginPage() {
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
                           placeholder="New password (min 8 characters)"
-                          className="tp-input w-full h-[48px] rounded-full px-4 text-sm text-[#0F1035] placeholder:text-[#6B6E94]"
+                          className="tp-input w-full h-[48px] rounded-full px-4 text-sm text-[#0F1035] dark:text-[#F4F2FF] placeholder:text-[#6B6E94] dark:placeholder:text-[#9A93BE]"
                         />
                       </>
                     )}

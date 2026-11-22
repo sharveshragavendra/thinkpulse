@@ -106,8 +106,8 @@ export function DataRetrievalView({ initialEmail }: DataRetrievalViewProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display font-bold text-2xl text-[#17143A]">Student Data Retrieval</h1>
-        <p className="text-sm text-[#64748B] mt-0.5">
+        <h1 className="font-display font-bold text-2xl text-[#17143A] dark:text-[#F4F2FF]">Student Data Retrieval</h1>
+        <p className="text-sm text-[#64748B] dark:text-[#A49EC6] mt-0.5">
           Search a student by email within your institution scope to inspect Normal-mode academic records and edit allowlisted profile fields.
         </p>
       </div>
@@ -121,14 +121,14 @@ export function DataRetrievalView({ initialEmail }: DataRetrievalViewProps) {
         className="tp-surface rounded-2xl p-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
       >
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-[#5B617A] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#5B617A] dark:text-[#A49EC6] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="email"
             required
             value={emailQuery}
             onChange={(e) => setEmailQuery(e.target.value)}
             placeholder="Enter exact student email address (e.g., student@institution.edu)"
-            className="tp-input w-full rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-[#17143A]"
+            className="tp-input w-full rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-[#17143A] dark:text-[#F4F2FF]"
           />
         </div>
         <button
@@ -141,23 +141,23 @@ export function DataRetrievalView({ initialEmail }: DataRetrievalViewProps) {
         </button>
       </form>
 
-      <div className="rounded-2xl bg-[#F4F1FF] border border-[#DDD9F5] px-4 py-3 flex items-start gap-2.5 text-xs text-[#4B4772]">
-        <ShieldCheck className="w-4 h-4 text-[#6334E8] shrink-0 mt-0.5" />
+      <div className="rounded-2xl bg-[#F4F1FF] dark:bg-[#8B5CF6]/15 border border-[#DDD9F5] dark:border-[#C4B5FD]/25 px-4 py-3 flex items-start gap-2.5 text-xs text-[#4B4772] dark:text-[#E5E0FF]">
+        <ShieldCheck className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD] shrink-0 mt-0.5" />
         <span>
           <strong>Privacy invariant enforced:</strong> Data Retrieval searches strictly within your institution scope and returns <strong>Normal-mode records only</strong>. Anonymous-mode submissions cannot be revealed or reidentified here.
         </span>
       </div>
 
       {error && (
-        <div role="alert" className="rounded-2xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-800 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div role="alert" className="rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 px-4 py-3 text-sm text-rose-800 dark:text-rose-200 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 dark:text-rose-400" />
           <span>{error}</span>
         </div>
       )}
 
       {notice && (
-        <div role="status" className="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div role="status" className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/55 border border-emerald-200 dark:border-emerald-400/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 shrink-0 dark:text-emerald-400" />
           <span>{notice}</span>
         </div>
       )}
@@ -167,77 +167,77 @@ export function DataRetrievalView({ initialEmail }: DataRetrievalViewProps) {
           {/* Left: Editable Allowlisted Profile Card */}
           <div className="lg:col-span-5 space-y-5">
             <form onSubmit={handleSaveProfile} className="tp-surface rounded-2xl p-5 space-y-4">
-              <div className="border-b border-[#ECE9FA] pb-3">
-                <h2 className="font-display font-bold text-base text-[#17143A]">
+              <div className="border-b border-[#ECE9FA] dark:border-white/10 pb-3">
+                <h2 className="font-display font-bold text-base text-[#17143A] dark:text-[#F4F2FF]">
                   Student Profile (Allowlisted Fields)
                 </h2>
-                <p className="text-xs text-[#64748B] mt-0.5 flex items-center gap-1">
+                <p className="text-xs text-[#64748B] dark:text-[#A49EC6] mt-0.5 flex items-center gap-1">
                   <Lock className="w-3 h-3" />
                   Verified email, role, ID & credentials are read-only.
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs bg-white/60 border border-white/90 rounded-2xl p-3.5">
+              <div className="grid grid-cols-2 gap-3 text-xs bg-white/60 dark:bg-white/6 border border-white/90 dark:border-white/10 rounded-2xl p-3.5">
                 <div>
-                  <span className="text-[#5B617A]">Email (locked)</span>
-                  <p className="font-semibold text-[#17143A] truncate">{result.student.email}</p>
+                  <span className="text-[#5B617A] dark:text-[#A49EC6]">Email (locked)</span>
+                  <p className="font-semibold text-[#17143A] dark:text-[#F4F2FF] truncate">{result.student.email}</p>
                 </div>
                 <div>
-                  <span className="text-[#5B617A]">Student ID (locked)</span>
-                  <p className="font-mono font-semibold text-[#17143A]">
+                  <span className="text-[#5B617A] dark:text-[#A49EC6]">Student ID (locked)</span>
+                  <p className="font-mono font-semibold text-[#17143A] dark:text-[#F4F2FF]">
                     {result.student.studentCode || '—'}
                   </p>
                 </div>
                 <div>
-                  <span className="text-[#5B617A]">Institution</span>
-                  <p className="font-medium text-[#17143A]">{result.student.institutionName}</p>
+                  <span className="text-[#5B617A] dark:text-[#A49EC6]">Institution</span>
+                  <p className="font-medium text-[#17143A] dark:text-[#F4F2FF]">{result.student.institutionName}</p>
                 </div>
                 <div>
-                  <span className="text-[#5B617A]">Registered</span>
-                  <p className="font-mono text-[#17143A] tabular-nums">
+                  <span className="text-[#5B617A] dark:text-[#A49EC6]">Registered</span>
+                  <p className="font-mono text-[#17143A] dark:text-[#F4F2FF] tabular-nums">
                     {new Date(result.student.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#17143A] mb-1">Display Name</label>
+                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Display Name</label>
                 <input
                   type="text"
                   required
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm"
+                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#17143A] mb-1">Class / Section</label>
+                  <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Class / Section</label>
                   <input
                     type="text"
                     value={classSection}
                     onChange={(e) => setClassSection(e.target.value)}
-                    className="tp-input w-full rounded-xl px-3.5 py-2 text-sm"
+                    className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#17143A] mb-1">Department</label>
+                  <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Department</label>
                   <input
                     type="text"
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="tp-input w-full rounded-xl px-3.5 py-2 text-sm"
+                    className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#17143A] mb-1">Account Status</label>
+                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Account Status</label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as 'active' | 'suspended')}
-                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm"
+                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 >
                   <option value="active">Active</option>
                   <option value="suspended">Suspended</option>
@@ -245,13 +245,13 @@ export function DataRetrievalView({ initialEmail }: DataRetrievalViewProps) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#17143A] mb-1">Academic Notes</label>
+                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1">Academic Notes</label>
                 <textarea
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Optional faculty notes..."
-                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm"
+                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                 />
               </div>
 
@@ -267,22 +267,22 @@ export function DataRetrievalView({ initialEmail }: DataRetrievalViewProps) {
 
             {/* Student Audit History */}
             <div className="tp-surface rounded-2xl p-5 space-y-3">
-              <h3 className="font-display font-bold text-sm text-[#17143A]">
+              <h3 className="font-display font-bold text-sm text-[#17143A] dark:text-[#F4F2FF]">
                 Profile Edit Audit Trail
               </h3>
               {result.auditHistory.length === 0 ? (
-                <p className="text-xs text-[#64748B]">No profile edits recorded.</p>
+                <p className="text-xs text-[#64748B] dark:text-[#A49EC6]">No profile edits recorded.</p>
               ) : (
                 <div className="space-y-2.5 max-h-56 overflow-y-auto">
                   {result.auditHistory.map((log) => (
-                    <div key={log.id} className="text-xs border-b border-[#ECE9FA] pb-2 last:border-0">
+                    <div key={log.id} className="text-xs border-b border-[#ECE9FA] dark:border-white/10 pb-2 last:border-0">
                       <div className="flex justify-between gap-2">
-                        <span className="font-mono font-semibold text-[#17143A]">{log.action}</span>
-                        <span className="text-[11px] text-[#94A3B8] tabular-nums">
+                        <span className="font-mono font-semibold text-[#17143A] dark:text-[#F4F2FF]">{log.action}</span>
+                        <span className="text-[11px] text-[#94A3B8] dark:text-[#8E88B0] tabular-nums">
                           {new Date(log.createdAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-[#64748B] mt-0.5">
+                      <p className="text-[#64748B] dark:text-[#A49EC6] mt-0.5">
                         By {log.actorEmail || 'System'}
                         {log.changedFields.length > 0 ? ` · Fields: ${log.changedFields.join(', ')}` : ''}
                       </p>
@@ -309,46 +309,46 @@ export function DataRetrievalView({ initialEmail }: DataRetrievalViewProps) {
                 { label: 'Pending Reviews', value: result.normalModeSummary.pendingReviews },
               ].map((m) => (
                 <div key={m.label} className="tp-surface rounded-2xl p-3.5">
-                  <p className="text-[11px] text-[#64748B]">{m.label}</p>
-                  <p className="font-mono text-xl font-bold text-[#17143A] mt-1 tabular-nums">{m.value}</p>
+                  <p className="text-[11px] text-[#64748B] dark:text-[#A49EC6]">{m.label}</p>
+                  <p className="font-mono text-xl font-bold text-[#17143A] dark:text-[#F4F2FF] mt-1 tabular-nums">{m.value}</p>
                 </div>
               ))}
             </div>
 
             <div className="tp-surface rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-[#ECE9FA]">
-                <h2 className="font-display font-bold text-base text-[#17143A]">
+              <div className="px-5 py-4 border-b border-[#ECE9FA] dark:border-white/10">
+                <h2 className="font-display font-bold text-base text-[#17143A] dark:text-[#F4F2FF]">
                   Normal-Mode Participation & Responses
                 </h2>
               </div>
 
               {result.activity.length === 0 ? (
-                <div className="p-10 text-center text-xs text-[#64748B]">
+                <div className="p-10 text-center text-xs text-[#64748B] dark:text-[#A49EC6]">
                   This student has no Normal-mode quiz or poll submissions yet.
                 </div>
               ) : (
-                <div className="divide-y divide-[#ECE9FA]">
+                <div className="divide-y divide-[#ECE9FA] dark:divide-white/10">
                   {result.activity.map((act) => (
                     <div key={act.submissionId} className="p-5 space-y-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                          <p className="font-semibold text-sm text-[#17143A]">{act.assessmentTitle}</p>
-                          <p className="text-xs text-[#64748B] capitalize tabular-nums">
+                          <p className="font-semibold text-sm text-[#17143A] dark:text-[#F4F2FF]">{act.assessmentTitle}</p>
+                          <p className="text-xs text-[#64748B] dark:text-[#A49EC6] capitalize tabular-nums">
                             {act.assessmentType} · Code {act.joinCode} ·{' '}
                             {new Date(act.submittedAt).toLocaleString()}
                           </p>
                         </div>
                         {act.assessmentType === 'quiz' ? (
                           <div className="text-right">
-                            <p className="font-mono font-bold text-sm text-[#6334E8] tabular-nums">
+                            <p className="font-mono font-bold text-sm text-[#6334E8] dark:text-[#C4B5FD] tabular-nums">
                               {act.totalScore} / {act.maxScore}
                             </p>
-                            <p className="text-[11px] text-[#64748B] capitalize">
+                            <p className="text-[11px] text-[#64748B] dark:text-[#A49EC6] capitalize">
                               {act.status.replace('_', ' ')}
                             </p>
                           </div>
                         ) : (
-                          <span className="text-xs font-medium text-emerald-700">Poll recorded</span>
+                          <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Poll recorded</span>
                         )}
                       </div>
 
@@ -356,21 +356,21 @@ export function DataRetrievalView({ initialEmail }: DataRetrievalViewProps) {
                         {act.answers.map((ans, idx) => (
                           <div
                             key={idx}
-                            className="rounded-xl bg-[#FAF9FF] border border-[#ECE9FA] px-3.5 py-2.5 text-xs space-y-1"
+                            className="rounded-xl bg-[#FAF9FF] dark:bg-white/5 border border-[#ECE9FA] dark:border-white/10 px-3.5 py-2.5 text-xs space-y-1"
                           >
                             <div className="flex justify-between gap-3">
-                              <span className="font-medium text-[#17143A]">
+                              <span className="font-medium text-[#17143A] dark:text-[#F4F2FF]">
                                 Q{idx + 1}. {ans.questionText}
                               </span>
                               {ans.maxPoints !== null && (
-                                <span className="font-mono text-[#6334E8] shrink-0 tabular-nums">
+                                <span className="font-mono text-[#6334E8] dark:text-[#C4B5FD] shrink-0 tabular-nums">
                                   {ans.awardedPoints} / {ans.maxPoints}
                                 </span>
                               )}
                             </div>
-                            <p className="text-[#4B4772]">Answer: {ans.answerDisplay}</p>
+                            <p className="text-[#4B4772] dark:text-[#C5BFE4]">Answer: {ans.answerDisplay}</p>
                             {ans.feedback && (
-                              <p className="text-[#6334E8]">Feedback: {ans.feedback}</p>
+                              <p className="text-[#6334E8] dark:text-[#C4B5FD]">Feedback: {ans.feedback}</p>
                             )}
                           </div>
                         ))}

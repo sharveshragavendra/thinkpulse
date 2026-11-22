@@ -18,12 +18,14 @@ import {
   submissions,
 } from '../../src/db/schema.ts';
 import {
+  addHostSchema,
   createAssessmentSchema,
   createStudentByHostSchema,
   extendSessionSchema,
   gradeSubmissionSchema,
   launchSessionSchema,
   recalculateSchema,
+  removeHostSchema,
   updateSettingsSchema,
   updateStudentProfileSchema,
 } from '../../shared/schemas.ts';
@@ -42,15 +44,24 @@ import {
   hashPassword,
   hashQrToken,
 } from '../utils/crypto.ts';
-import { createRateLimiter, requireAuth, requireHost, type AuthRequest } from '../middleware/auth.ts';
+import {
+  createRateLimiter,
+  isPrimaryHostEmail,
+  PRIMARY_HOST_EMAILS,
+  requireAuth,
+  requireHost,
+  type AuthRequest,
+} from '../middleware/auth.ts';
 import { recordAuditLog } from '../services/audit.ts';
 import { publishRealtimeEvent } from '../realtime/bus.ts';
 import type {
+  AddedHostEntry,
   AssessmentDTO,
   AssessmentStatus,
   AssessmentType,
   AuditLogDTO,
   GradingOutcome,
+  HostAccessRecordDTO,
   HostOverviewDTO,
   PrivacyMode,
   QuestionDTO,
@@ -68,6 +79,7 @@ import type {
 
 const router = Router();
 const emailSearchRateLimit = createRateLimiter('email-search', 30, 60_000);
+const hostManageRateLimit = createRateLimiter('host-manage', 25, 60_000);
 
 router.use('/host', requireAuth, requireHost);
 
@@ -2495,6 +2507,315 @@ router.patch('/host/settings', async (req: AuthRequest, res) => {
   } catch (err) {
     console.error('[host] update settings error:', err);
     return res.status(500).json({ error: 'Unable to save settings.' });
+  }
+});
+
+// ============================================================================
+// 8. HOST ACCESS MANAGEMENT (Add / List / Revoke Host Emails)
+// ============================================================================
+router.get('/host/hosts', async (req: AuthRequest, res) => {
+  try {
+    const instId = req.currentUser!.institutionId;
+    const currentEmail = req.currentUser!.email.trim().toLowerCase();
+
+    const [inst] = await db
+      .select()
+      .from(institutions)
+      .where(eq(institutions.id, instId))
+      .limit(1);
+
+    const addedHosts: AddedHostEntry[] = Array.isArray(inst?.settings?.addedHosts)
+      ? inst.settings.addedHosts
+      : [];
+
+    const allHostEmails = Array.from(
+      new Set<string>([
+        ...Array.from(PRIMARY_HOST_EMAILS),
+        ...addedHosts.map((h) => h.email.trim().toLowerCase()),
+      ])
+    );
+
+    const matchedProfiles =
+      allHostEmails.length > 0
+        ? await db
+            .select({
+              email: profiles.email,
+              displayName: profiles.displayName,
+              status: profiles.status,
+              createdAt: profiles.createdAt,
+            })
+            .from(profiles)
+            .where(and(eq(profiles.institutionId, instId), inArray(profiles.email, allHostEmails)))
+        : [];
+
+    const profileByEmail = new Map(
+      matchedProfiles.map((p) => [p.email.trim().toLowerCase(), p])
+    );
+
+    const primaryRecords: HostAccessRecordDTO[] = Array.from(PRIMARY_HOST_EMAILS).map((email) => {
+      const p = profileByEmail.get(email);
+      return {
+        email,
+        displayName: p?.displayName || email.split('@')[0],
+        role: 'platform_admin',
+        isPrimary: true,
+        hasSignedIn: Boolean(p),
+        status: p?.status || 'active',
+        addedByEmail: null,
+        addedAt: p?.createdAt ? p.createdAt.toISOString() : null,
+        isCurrentUser: email === currentEmail,
+      };
+    });
+
+    const addedRecords: HostAccessRecordDTO[] = addedHosts
+      .filter((entry) => !isPrimaryHostEmail(entry.email))
+      .map((entry) => {
+        const normalized = entry.email.trim().toLowerCase();
+        const p = profileByEmail.get(normalized);
+        return {
+          email: normalized,
+          displayName: p?.displayName || entry.displayName?.trim() || normalized.split('@')[0],
+          role: 'host' as const,
+          isPrimary: false,
+          hasSignedIn: Boolean(p),
+          status: p?.status || 'invited',
+          addedByEmail: entry.addedByEmail || null,
+          addedAt: entry.addedAt || null,
+          isCurrentUser: normalized === currentEmail,
+        };
+      })
+      .sort((a, b) => (b.addedAt || '').localeCompare(a.addedAt || ''));
+
+    return res.json({ hosts: [...primaryRecords, ...addedRecords] });
+  } catch (err) {
+    console.error('[host] list hosts error:', err);
+    return res.status(500).json({ error: 'Unable to load authorized hosts.' });
+  }
+});
+
+router.post('/host/hosts', hostManageRateLimit, async (req: AuthRequest, res) => {
+  const parsed = addHostSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: parsed.error.issues[0]?.message || 'Please enter a valid email address.',
+    });
+  }
+
+  try {
+    const instId = req.currentUser!.institutionId;
+    const normalizedEmail = parsed.data.email.trim().toLowerCase();
+    const optionalName = parsed.data.displayName?.trim() || null;
+
+    if (isPrimaryHostEmail(normalizedEmail)) {
+      return res.status(409).json({
+        error: 'This email address is already a Primary Host.',
+      });
+    }
+
+    const [inst] = await db
+      .select()
+      .from(institutions)
+      .where(eq(institutions.id, instId))
+      .limit(1);
+
+    if (!inst) {
+      return res.status(404).json({ error: 'Institution not found.' });
+    }
+
+    const existingAdded: AddedHostEntry[] = Array.isArray(inst.settings?.addedHosts)
+      ? inst.settings.addedHosts
+      : [];
+
+    if (existingAdded.some((h) => h.email.trim().toLowerCase() === normalizedEmail)) {
+      return res.status(409).json({
+        error: 'This email address already has Host access.',
+      });
+    }
+
+    const newEntry: AddedHostEntry = {
+      email: normalizedEmail,
+      displayName: optionalName,
+      addedByEmail: req.currentUser!.email,
+      addedAt: new Date().toISOString(),
+    };
+
+    const nextSettings = {
+      ...(inst.settings ?? {}),
+      addedHosts: [...existingAdded, newEntry],
+    };
+
+    await db
+      .update(institutions)
+      .set({
+        settings: nextSettings,
+        updatedAt: new Date(),
+      })
+      .where(eq(institutions.id, instId));
+
+    // If the user already has a profile in this institution (e.g. signed in earlier as student), upgrade role immediately
+    const [existingProfile] = await db
+      .select()
+      .from(profiles)
+      .where(and(eq(profiles.email, normalizedEmail), eq(profiles.institutionId, instId)))
+      .limit(1);
+
+    if (existingProfile) {
+      await db
+        .update(profiles)
+        .set({
+          role: 'host',
+          serverAdmin: false,
+          ...(optionalName && !existingProfile.displayName ? { displayName: optionalName } : {}),
+          updatedAt: new Date(),
+        })
+        .where(eq(profiles.id, existingProfile.id));
+
+      await db
+        .update(institutionMemberships)
+        .set({ membershipRole: 'host' })
+        .where(
+          and(
+            eq(institutionMemberships.userId, existingProfile.id),
+            eq(institutionMemberships.institutionId, instId)
+          )
+        );
+    }
+
+    await recordAuditLog({
+      actorId: req.currentUser!.id,
+      actorEmail: req.currentUser!.email,
+      institutionId: instId,
+      action: 'host.added',
+      targetType: 'host',
+      targetId: existingProfile?.id ?? null,
+      changedFields: ['role'],
+      metadata: {
+        email: normalizedEmail,
+        displayName: existingProfile?.displayName || optionalName,
+        upgradedExistingProfile: Boolean(existingProfile),
+      },
+    });
+
+    const record: HostAccessRecordDTO = {
+      email: normalizedEmail,
+      displayName: existingProfile?.displayName || optionalName || normalizedEmail.split('@')[0],
+      role: 'host',
+      isPrimary: false,
+      hasSignedIn: Boolean(existingProfile),
+      status: existingProfile?.status || 'invited',
+      addedByEmail: newEntry.addedByEmail,
+      addedAt: newEntry.addedAt,
+      isCurrentUser: normalizedEmail === req.currentUser!.email.trim().toLowerCase(),
+    };
+
+    return res.status(201).json({ host: record });
+  } catch (err) {
+    console.error('[host] add host error:', err);
+    return res.status(500).json({ error: 'Unable to add host right now.' });
+  }
+});
+
+router.delete('/host/hosts', hostManageRateLimit, async (req: AuthRequest, res) => {
+  const parsed = removeHostSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: parsed.error.issues[0]?.message || 'Please provide a valid email address.',
+    });
+  }
+
+  try {
+    const instId = req.currentUser!.institutionId;
+    const normalizedEmail = parsed.data.email.trim().toLowerCase();
+
+    if (isPrimaryHostEmail(normalizedEmail)) {
+      return res.status(403).json({
+        error: 'Primary Host accounts cannot be removed.',
+      });
+    }
+
+    if (normalizedEmail === req.currentUser!.email.trim().toLowerCase()) {
+      return res.status(400).json({
+        error: 'You cannot remove your own Host access.',
+      });
+    }
+
+    const [inst] = await db
+      .select()
+      .from(institutions)
+      .where(eq(institutions.id, instId))
+      .limit(1);
+
+    if (!inst) {
+      return res.status(404).json({ error: 'Institution not found.' });
+    }
+
+    const existingAdded: AddedHostEntry[] = Array.isArray(inst.settings?.addedHosts)
+      ? inst.settings.addedHosts
+      : [];
+
+    const filtered = existingAdded.filter(
+      (h) => h.email.trim().toLowerCase() !== normalizedEmail
+    );
+
+    if (filtered.length === existingAdded.length) {
+      return res.status(404).json({ error: 'Host email was not found.' });
+    }
+
+    const nextSettings = {
+      ...(inst.settings ?? {}),
+      addedHosts: filtered,
+    };
+
+    await db
+      .update(institutions)
+      .set({
+        settings: nextSettings,
+        updatedAt: new Date(),
+      })
+      .where(eq(institutions.id, instId));
+
+    const [existingProfile] = await db
+      .select()
+      .from(profiles)
+      .where(and(eq(profiles.email, normalizedEmail), eq(profiles.institutionId, instId)))
+      .limit(1);
+
+    if (existingProfile) {
+      await db
+        .update(profiles)
+        .set({
+          role: 'student',
+          serverAdmin: false,
+          updatedAt: new Date(),
+        })
+        .where(eq(profiles.id, existingProfile.id));
+
+      await db
+        .update(institutionMemberships)
+        .set({ membershipRole: 'student' })
+        .where(
+          and(
+            eq(institutionMemberships.userId, existingProfile.id),
+            eq(institutionMemberships.institutionId, instId)
+          )
+        );
+    }
+
+    await recordAuditLog({
+      actorId: req.currentUser!.id,
+      actorEmail: req.currentUser!.email,
+      institutionId: instId,
+      action: 'host.removed',
+      targetType: 'host',
+      targetId: existingProfile?.id ?? null,
+      changedFields: ['role'],
+      metadata: { email: normalizedEmail },
+    });
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('[host] remove host error:', err);
+    return res.status(500).json({ error: 'Unable to remove host right now.' });
   }
 });
 

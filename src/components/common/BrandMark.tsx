@@ -66,8 +66,8 @@ export function BrandMark({ size = 'md', variant = 'inline', inverted = false }:
         </svg>
 
         <span className={`font-display font-extrabold tracking-tight leading-none mt-1 ${wordSize}`}>
-          <span className="text-[#0F1035]">Think</span>
-          <span className="text-[#6D28D9]">Pulse</span>
+          <span className="text-[#0F1035] dark:text-[#F4F2FF]">Think</span>
+          <span className="text-[#6D28D9] dark:text-[#C4B5FD]">Pulse</span>
         </span>
       </div>
     );
@@ -100,8 +100,8 @@ export function BrandMark({ size = 'md', variant = 'inline', inverted = false }:
         </svg>
       </div>
       <span className={`font-display font-extrabold tracking-tight ${textSize}`}>
-        <span className={inverted ? 'text-white' : 'text-[#0F1035]'}>Think</span>
-        <span className={inverted ? 'text-[#E9D5FF]' : 'text-[#7C3AED]'}>Pulse</span>
+        <span className={inverted ? 'text-white' : 'text-[#0F1035] dark:text-[#F4F2FF]'}>Think</span>
+        <span className={inverted ? 'text-[#E9D5FF]' : 'text-[#7C3AED] dark:text-[#C4B5FD]'}>Pulse</span>
       </span>
     </div>
   );

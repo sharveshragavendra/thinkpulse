@@ -181,7 +181,7 @@ export function QrScannerModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.16 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/50 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141033]/50 dark:bg-black/70 backdrop-blur-md p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="qr-scanner-title"
@@ -199,12 +199,12 @@ export function QrScannerModal({
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="w-full max-w-lg rounded-[30px] tp-modal-glass overflow-hidden"
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#17143A]/8">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#17143A]/8 dark:border-white/10">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#6334E8]/12 text-[#6334E8] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[#6334E8]/12 dark:bg-[#8B5CF6]/20 text-[#6334E8] dark:text-[#C4B5FD] flex items-center justify-center">
                   <Camera className="w-4 h-4" />
                 </div>
-                <h2 id="qr-scanner-title" className="font-display font-bold text-lg text-[#17143A]">
+                <h2 id="qr-scanner-title" className="font-display font-bold text-lg text-[#17143A] dark:text-[#F4F2FF]">
                   Scan Official Session QR
                 </h2>
               </div>
@@ -215,7 +215,7 @@ export function QrScannerModal({
                   onClose();
                 }}
                 aria-label="Close QR scanner"
-                className="p-2 rounded-xl text-[#5B617A] hover:text-[#17143A] hover:bg-white/80 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-[#5B617A] dark:text-[#A49EC6] hover:text-[#17143A] dark:hover:text-white hover:bg-white/80 dark:hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -225,9 +225,9 @@ export function QrScannerModal({
               {error && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2.5 rounded-2xl bg-rose-50/90 border border-rose-200 p-3.5 text-sm text-rose-800"
+                  className="flex items-start gap-2.5 rounded-2xl bg-rose-50/90 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 p-3.5 text-sm text-rose-800 dark:text-rose-200"
                 >
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                   <div className="space-y-1">
                     <p>{error}</p>
                     {cameraState === 'active' && (
@@ -237,7 +237,7 @@ export function QrScannerModal({
                           setError(null);
                           rafRef.current = requestAnimationFrame(scanLoop);
                         }}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-rose-900 underline cursor-pointer"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-rose-900 dark:text-rose-200 underline cursor-pointer"
                       >
                         <RefreshCw className="w-3.5 h-3.5" />
                         Resume scanning
@@ -297,8 +297,8 @@ export function QrScannerModal({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <label className="tp-glass-btn flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-[#17143A] cursor-pointer">
-                  <ImageUp className="w-4 h-4 text-[#6334E8]" />
+                <label className="tp-glass-btn flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-[#17143A] dark:text-[#F4F2FF] cursor-pointer">
+                  <ImageUp className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD]" />
                   <span>Upload QR Image</span>
                   <input
                     type="file"
@@ -315,9 +315,9 @@ export function QrScannerModal({
                     onClose();
                     onSwitchToCode();
                   }}
-                  className="tp-glass-btn flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-[#17143A] cursor-pointer"
+                  className="tp-glass-btn flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-[#17143A] dark:text-[#F4F2FF] cursor-pointer"
                 >
-                  <Keyboard className="w-4 h-4 text-[#6334E8]" />
+                  <Keyboard className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD]" />
                   <span>Enter 6-Digit Code</span>
                 </button>
               </div>

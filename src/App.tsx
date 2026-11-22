@@ -1,5 +1,6 @@
 import React from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext.tsx';
+import { ThemeProvider } from './context/ThemeContext.tsx';
 import { LoginPage } from './components/auth/LoginPage.tsx';
 import { StudentPortal } from './components/student/StudentPortal.tsx';
 import { HostLayout } from './components/host/HostLayout.tsx';
@@ -7,7 +8,7 @@ import { HostLayout } from './components/host/HostLayout.tsx';
 function ThinkPulseRouter() {
   const { user } = useAuth();
 
-  // Initial route is always ThinkPulse split-screen login (no marketing page before auth)
+  // Initial route is always ThinkPulse login (no marketing page before auth)
   if (!user) {
     return <LoginPage />;
   }
@@ -22,8 +23,10 @@ function ThinkPulseRouter() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ThinkPulseRouter />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ThinkPulseRouter />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

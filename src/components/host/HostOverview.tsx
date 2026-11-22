@@ -86,9 +86,9 @@ export function HostOverview({
     return (
       <div
         role="alert"
-        className="rounded-[24px] bg-rose-50/90 backdrop-blur-md border border-rose-200 p-5 text-sm text-rose-800 flex items-center gap-2.5"
+        className="rounded-[24px] bg-rose-50/90 dark:bg-rose-950/60 backdrop-blur-md border border-rose-200 dark:border-rose-400/30 p-5 text-sm text-rose-800 dark:text-rose-200 flex items-center gap-2.5"
       >
-        <AlertCircle className="w-5 h-5 shrink-0" />
+        <AlertCircle className="w-5 h-5 shrink-0 dark:text-rose-400" />
         <span>{error || 'Overview unavailable.'}</span>
       </div>
     );
@@ -121,10 +121,10 @@ export function HostOverview({
             className="font-display font-extrabold text-[28px] sm:text-[34px] tracking-tight leading-[1.12]"
             style={{ textWrap: 'balance' }}
           >
-            <span className="text-[#0F1035]">Host Command </span>
-            <span className="text-[#7C3AED]">Centre</span>
+            <span className="text-[#0F1035] dark:text-[#F4F2FF]">Host Command </span>
+            <span className="text-[#7C3AED] dark:text-[#C4B5FD]">Centre</span>
           </h1>
-          <p className="text-sm sm:text-[15px] text-[#3E3963] mt-2 leading-relaxed">
+          <p className="text-sm sm:text-[15px] text-[#3E3963] dark:text-[#C5BFE4] mt-2 leading-relaxed">
             Monitor live classroom participation, launch rotating QR sessions, and review student responses in real time.
           </p>
         </div>
@@ -144,9 +144,9 @@ export function HostOverview({
             <button
               type="button"
               onClick={() => onQuickCreate('poll')}
-              className="tp-glass-btn inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-semibold text-[#0F1035] whitespace-nowrap cursor-pointer"
+              className="tp-glass-btn inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-semibold text-[#0F1035] dark:text-[#F4F2FF] whitespace-nowrap cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5 text-[#7C3AED]" />
+              <Plus className="w-3.5 h-3.5 text-[#7C3AED] dark:text-[#C4B5FD]" />
               <span>New Poll</span>
             </button>
             <button
@@ -173,16 +173,16 @@ export function HostOverview({
               className="group tp-surface tp-glass-tile rounded-[24px] p-5 text-left cursor-pointer flex flex-col justify-between gap-4 relative overflow-hidden"
             >
               <div className="flex items-center justify-between gap-2 relative z-10">
-                <span className="w-10 h-10 rounded-full bg-[#7C3AED]/12 text-[#7C3AED] flex items-center justify-center shrink-0 group-hover:bg-[#7C3AED] group-hover:text-white transition-colors shadow-xs">
+                <span className="w-10 h-10 rounded-full bg-[#7C3AED]/12 dark:bg-[#8B5CF6]/22 text-[#7C3AED] dark:text-[#C4B5FD] flex items-center justify-center shrink-0 group-hover:bg-[#7C3AED] group-hover:text-white transition-colors shadow-xs">
                   <Icon className="w-[18px] h-[18px]" />
                 </span>
-                <ArrowUpRight className="w-4 h-4 text-[#43446B] group-hover:text-[#7C3AED] transition-colors" />
+                <ArrowUpRight className="w-4 h-4 text-[#43446B] dark:text-[#A49EC6] group-hover:text-[#7C3AED] dark:group-hover:text-[#C4B5FD] transition-colors" />
               </div>
               <div className="relative z-10">
-                <p className="font-display text-[28px] font-extrabold text-[#0F1035] tabular-nums leading-none">
+                <p className="font-display text-[28px] font-extrabold text-[#0F1035] dark:text-[#F4F2FF] tabular-nums leading-none">
                   {card.value}
                 </p>
-                <p className="text-[13px] font-medium text-[#3E3963] mt-2 truncate">{card.label}</p>
+                <p className="text-[13px] font-medium text-[#3E3963] dark:text-[#C5BFE4] mt-2 truncate">{card.label}</p>
               </div>
             </button>
           );
@@ -193,19 +193,19 @@ export function HostOverview({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* Active Live Sessions Liquid Glass Panel */}
         <section className="lg:col-span-7 tp-surface rounded-[28px] overflow-hidden flex flex-col">
-          <div className="px-6 py-5 border-b border-[#17143A]/8 flex items-start justify-between gap-4">
+          <div className="px-6 py-5 border-b border-[#17143A]/8 dark:border-white/10 flex items-start justify-between gap-4">
             <div>
-              <h2 className="font-display font-bold text-base text-[#0F1035]">
+              <h2 className="font-display font-bold text-base text-[#0F1035] dark:text-[#F4F2FF]">
                 Active Live Sessions
               </h2>
-              <p className="text-xs text-[#55587D] mt-0.5 tabular-nums">
+              <p className="text-xs text-[#55587D] dark:text-[#A49EC6] mt-0.5 tabular-nums">
                 {data.activeSessionsList.length} running right now
               </p>
             </div>
             <button
               type="button"
               onClick={() => onNavigate('live')}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#7C3AED] hover:text-[#5B21B6] cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#7C3AED] dark:text-[#C4B5FD] hover:text-[#5B21B6] dark:hover:text-[#DDD6FE] cursor-pointer whitespace-nowrap"
             >
               <span>View all</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -214,12 +214,12 @@ export function HostOverview({
 
           {data.activeSessionsList.length === 0 ? (
             <div className="flex-1 px-6 py-11 flex flex-col items-center justify-center text-center space-y-3.5">
-              <div className="w-14 h-14 rounded-full bg-[#7C3AED]/12 text-[#7C3AED] flex items-center justify-center shadow-xs">
+              <div className="w-14 h-14 rounded-full bg-[#7C3AED]/12 dark:bg-[#8B5CF6]/22 text-[#7C3AED] dark:text-[#C4B5FD] flex items-center justify-center shadow-xs">
                 <QrCode className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <p className="text-[15px] font-bold text-[#0F1035]">No active sessions running</p>
-                <p className="text-xs text-[#43446B] max-w-xs mx-auto leading-relaxed">
+                <p className="text-[15px] font-bold text-[#0F1035] dark:text-[#F4F2FF]">No active sessions running</p>
+                <p className="text-xs text-[#43446B] dark:text-[#A49EC6] max-w-xs mx-auto leading-relaxed">
                   Launch a quiz or poll to generate a unique six-digit code and rotating QR for students.
                 </p>
               </div>
@@ -234,25 +234,25 @@ export function HostOverview({
                 <button
                   type="button"
                   onClick={() => onQuickCreate('poll')}
-                  className="tp-glass-btn text-[#0F1035] px-6 py-2.5 rounded-full text-xs font-semibold cursor-pointer whitespace-nowrap"
+                  className="tp-glass-btn text-[#0F1035] dark:text-[#F4F2FF] px-6 py-2.5 rounded-full text-xs font-semibold cursor-pointer whitespace-nowrap"
                 >
                   Create Poll
                 </button>
               </div>
             </div>
           ) : (
-            <div className="divide-y divide-[#17143A]/8 flex-1">
+            <div className="divide-y divide-[#17143A]/8 dark:divide-white/10 flex-1">
               {data.activeSessionsList.map((s) => (
                 <div
                   key={s.id}
-                  className="px-6 py-4 flex flex-wrap items-center justify-between gap-4 hover:bg-white/55 transition-colors"
+                  className="px-6 py-4 flex flex-wrap items-center justify-between gap-4 hover:bg-white/55 dark:hover:bg-white/6 transition-colors"
                 >
                   <div className="min-w-0">
-                    <p className="font-semibold text-sm text-[#0F1035] truncate">
+                    <p className="font-semibold text-sm text-[#0F1035] dark:text-[#F4F2FF] truncate">
                       {s.assessmentTitle}
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#55587D] mt-1">
-                      <span className="font-mono font-bold text-[#7C3AED] tabular-nums">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#55587D] dark:text-[#A49EC6] mt-1">
+                      <span className="font-mono font-bold text-[#7C3AED] dark:text-[#C4B5FD] tabular-nums">
                         {s.joinCode.slice(0, 3)} {s.joinCode.slice(3)}
                       </span>
                       <span aria-hidden="true">·</span>
@@ -280,11 +280,11 @@ export function HostOverview({
                       type="button"
                       onClick={() => void handleCopyCode(s)}
                       title="Copy 6-digit code"
-                      className="tp-glass-btn p-2 rounded-full text-[#43446B] cursor-pointer"
+                      className="tp-glass-btn p-2 rounded-full text-[#43446B] dark:text-[#C5BFE4] cursor-pointer"
                       aria-label={`Copy join code ${s.joinCode}`}
                     >
                       {copiedId === s.id ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                       ) : (
                         <Copy className="w-3.5 h-3.5" />
                       )}
@@ -292,7 +292,7 @@ export function HostOverview({
                     <button
                       type="button"
                       onClick={() => onOpenSessionModal(s)}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#7C3AED]/12 hover:bg-[#7C3AED]/20 text-[#7C3AED] text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#7C3AED]/12 dark:bg-[#8B5CF6]/24 hover:bg-[#7C3AED]/20 dark:hover:bg-[#8B5CF6]/35 text-[#7C3AED] dark:text-[#DDD6FE] text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
                     >
                       <QrCode className="w-3.5 h-3.5" />
                       <span>QR & Controls</span>
@@ -306,15 +306,15 @@ export function HostOverview({
 
         {/* Recent Activity Liquid Glass Panel */}
         <section className="lg:col-span-5 tp-surface rounded-[28px] overflow-hidden flex flex-col">
-          <div className="px-6 py-5 border-b border-[#17143A]/8 flex items-start justify-between gap-4">
+          <div className="px-6 py-5 border-b border-[#17143A]/8 dark:border-white/10 flex items-start justify-between gap-4">
             <div>
-              <h2 className="font-display font-bold text-base text-[#0F1035]">Recent Activity</h2>
-              <p className="text-xs text-[#55587D] mt-0.5">Latest institutional audit trail</p>
+              <h2 className="font-display font-bold text-base text-[#0F1035] dark:text-[#F4F2FF]">Recent Activity</h2>
+              <p className="text-xs text-[#55587D] dark:text-[#A49EC6] mt-0.5">Latest institutional audit trail</p>
             </div>
             <button
               type="button"
               onClick={() => onNavigate('audit')}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#7C3AED] hover:text-[#5B21B6] cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#7C3AED] dark:text-[#C4B5FD] hover:text-[#5B21B6] dark:hover:text-[#DDD6FE] cursor-pointer whitespace-nowrap"
             >
               <span>Audit logs</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -322,25 +322,25 @@ export function HostOverview({
           </div>
 
           {data.recentActivity.length === 0 ? (
-            <div className="flex-1 p-10 flex items-center justify-center text-center text-xs text-[#55587D]">
+            <div className="flex-1 p-10 flex items-center justify-center text-center text-xs text-[#55587D] dark:text-[#A49EC6]">
               Institution activity will appear here as assessments, grades, and records are updated.
             </div>
           ) : (
-            <div className="divide-y divide-[#17143A]/8 flex-1">
+            <div className="divide-y divide-[#17143A]/8 dark:divide-white/10 flex-1">
               {data.recentActivity.map((log) => (
                 <div
                   key={log.id}
-                  className="px-6 py-4 text-xs space-y-1 hover:bg-white/55 transition-colors"
+                  className="px-6 py-4 text-xs space-y-1 hover:bg-white/55 dark:hover:bg-white/6 transition-colors"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-semibold text-[13px] text-[#0F1035] truncate">
+                    <span className="font-semibold text-[13px] text-[#0F1035] dark:text-[#F4F2FF] truncate">
                       {log.action}
                     </span>
-                    <span className="text-[11px] font-medium text-[#55587D] tabular-nums shrink-0">
+                    <span className="text-[11px] font-medium text-[#55587D] dark:text-[#8E88B0] tabular-nums shrink-0">
                       {new Date(log.createdAt).toLocaleTimeString()}
                     </span>
                   </div>
-                  <p className="text-[#55587D] truncate">
+                  <p className="text-[#55587D] dark:text-[#A49EC6] truncate">
                     {log.actorEmail || 'System'} · {log.targetType}
                   </p>
                 </div>

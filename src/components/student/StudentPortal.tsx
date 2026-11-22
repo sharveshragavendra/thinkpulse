@@ -12,6 +12,7 @@ import {
 import { motion } from 'motion/react';
 import { AmbientCanvas } from '../common/AmbientCanvas.tsx';
 import { BrandMark } from '../common/BrandMark.tsx';
+import { ThemeToggle } from '../common/ThemeToggle.tsx';
 import { QrScannerModal } from './QrScannerModal.tsx';
 import { AssessmentTaker } from './AssessmentTaker.tsx';
 import { StudentResultView } from './StudentResultView.tsx';
@@ -185,7 +186,7 @@ export function StudentPortal() {
         <header className="max-w-6xl mx-auto tp-glass-bar rounded-full px-5 h-14 flex items-center justify-between gap-4">
           <BrandMark size="sm" />
 
-          <div className="flex items-center gap-3.5 min-w-0">
+          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             <div className="hidden sm:flex items-center gap-2.5 min-w-0">
               <div
                 className="w-8 h-8 rounded-full tp-gradient-btn text-white font-display font-bold text-xs flex items-center justify-center shrink-0"
@@ -194,18 +195,19 @@ export function StudentPortal() {
                 {initials}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-[#0F1035] truncate leading-tight">
+                <p className="text-xs font-semibold text-[#0F1035] dark:text-[#F4F2FF] truncate leading-tight">
                   {user?.displayName}
                 </p>
-                <p className="text-[11px] text-[#55587D] truncate leading-tight">{user?.email}</p>
+                <p className="text-[11px] text-[#55587D] dark:text-[#A49EC6] truncate leading-tight">{user?.email}</p>
               </div>
             </div>
+            <ThemeToggle compact />
             <button
               type="button"
               onClick={() => void logout()}
-              className="tp-glass-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-[#0F1035] whitespace-nowrap shrink-0 cursor-pointer"
+              className="tp-glass-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-[#0F1035] dark:text-[#F4F2FF] whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <LogOut className="w-3.5 h-3.5 text-[#55587D]" />
+              <LogOut className="w-3.5 h-3.5 text-[#55587D] dark:text-[#C4B5FD]" />
               <span>Sign Out</span>
             </button>
           </div>
@@ -221,19 +223,19 @@ export function StudentPortal() {
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-4"
         >
           <div>
-            <p className="text-xs font-semibold text-[#6334E8]">
+            <p className="text-xs font-semibold text-[#6334E8] dark:text-[#C4B5FD]">
               Student Portal · {user?.institutionName || 'ThinkPulse'}
             </p>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17143A] tracking-tight mt-1">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#17143A] dark:text-[#F4F2FF] tracking-tight mt-1">
               Welcome, {user?.displayName}
             </h1>
-            <p className="text-sm text-[#433E68] mt-1">
+            <p className="text-sm text-[#433E68] dark:text-[#C5BFE4] mt-1">
               Join an active quiz or poll using the host’s six-digit code or official QR scanner.
             </p>
           </div>
           {user?.classSection && (
-            <div className="text-xs text-[#433E68] tp-surface rounded-xl px-4 py-2 whitespace-nowrap">
-              Class: <strong className="text-[#17143A]">{user.classSection}</strong>
+            <div className="text-xs text-[#433E68] dark:text-[#C5BFE4] tp-surface rounded-xl px-4 py-2 whitespace-nowrap">
+              Class: <strong className="text-[#17143A] dark:text-[#F4F2FF]">{user.classSection}</strong>
             </div>
           )}
         </motion.div>
@@ -249,10 +251,10 @@ export function StudentPortal() {
           >
             <div className="relative z-10 flex items-start justify-between gap-3">
               <div>
-                <h2 className="font-display font-bold text-xl text-[#0F1035]">
+                <h2 className="font-display font-bold text-xl text-[#0F1035] dark:text-[#F4F2FF]">
                   Enter 6-Digit Session Code
                 </h2>
-                <p className="text-sm text-[#43446B] mt-1">
+                <p className="text-sm text-[#43446B] dark:text-[#C5BFE4] mt-1">
                   Type or paste the six numeric digits displayed on your host’s screen.
                 </p>
               </div>
@@ -260,7 +262,7 @@ export function StudentPortal() {
                 <button
                   type="button"
                   onClick={handleClearDigits}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#43446B] hover:text-[#0F1035] cursor-pointer whitespace-nowrap"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#43446B] dark:text-[#C5BFE4] hover:text-[#0F1035] dark:hover:text-white cursor-pointer whitespace-nowrap"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Clear</span>
@@ -279,7 +281,7 @@ export function StudentPortal() {
                   <React.Fragment key={idx}>
                     {idx === 3 && (
                       <span
-                        className="text-lg font-mono font-bold text-[#6E6A96] px-0.5 select-none"
+                        className="text-lg font-mono font-bold text-[#6E6A96] dark:text-[#A49EC6] px-0.5 select-none"
                         aria-hidden="true"
                       >
                         –
@@ -298,8 +300,8 @@ export function StudentPortal() {
                       onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                       className={`tp-input w-full h-14 sm:h-[68px] text-center font-mono text-2xl sm:text-3xl font-bold rounded-2xl tabular-nums transition-all ${
                         digit
-                          ? 'text-[#6D28D9] border-[#7C3AED]/65 bg-white shadow-sm'
-                          : 'text-[#0F1035] bg-white/90'
+                          ? 'text-[#6D28D9] dark:text-[#C4B5FD] border-[#7C3AED]/65 dark:border-[#A78BFA]/70 bg-white dark:bg-[#23184A] shadow-sm'
+                          : 'text-[#0F1035] dark:text-[#F4F2FF] bg-white/90 dark:bg-[#171133]/85'
                       }`}
                     />
                   </React.Fragment>
@@ -309,9 +311,9 @@ export function StudentPortal() {
               {error && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2.5 rounded-2xl bg-rose-50/95 border border-rose-200 px-3.5 py-3 text-sm text-rose-800"
+                  className="flex items-start gap-2.5 rounded-2xl bg-rose-50/95 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 px-3.5 py-3 text-sm text-rose-800 dark:text-rose-200"
                 >
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                   <span>{error}</span>
                 </div>
               )}
@@ -326,8 +328,8 @@ export function StudentPortal() {
               </button>
             </form>
 
-            <div className="relative z-10 flex items-start gap-2.5 pt-3 border-t border-[#17143A]/10 text-xs text-[#43446B]">
-              <ShieldCheck className="w-4 h-4 text-[#6D28D9] shrink-0 mt-0.5" />
+            <div className="relative z-10 flex items-start gap-2.5 pt-3 border-t border-[#17143A]/10 dark:border-white/10 text-xs text-[#43446B] dark:text-[#C5BFE4]">
+              <ShieldCheck className="w-4 h-4 text-[#6D28D9] dark:text-[#C4B5FD] shrink-0 mt-0.5" />
               <span>
                 You can join only active sessions. Before starting, ThinkPulse clearly indicates whether the session is Anonymous or Normal mode.
               </span>
@@ -348,16 +350,16 @@ export function StudentPortal() {
             />
             <div className="space-y-4 relative z-10">
               {/* Viewfinder Motif Icon Container */}
-              <div className="w-16 h-16 rounded-2xl bg-white/75 border border-white/95 shadow-sm flex items-center justify-center relative">
-                <span className="absolute top-2 left-2 w-2.5 h-2.5 border-t-2 border-l-2 border-[#6334E8] rounded-tl-xs" />
-                <span className="absolute top-2 right-2 w-2.5 h-2.5 border-t-2 border-r-2 border-[#6334E8] rounded-tr-xs" />
-                <span className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b-2 border-l-2 border-[#6334E8] rounded-bl-xs" />
-                <span className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b-2 border-r-2 border-[#6334E8] rounded-br-xs" />
-                <QrCode className="w-7 h-7 text-[#6334E8]" />
+              <div className="w-16 h-16 rounded-2xl bg-white/75 dark:bg-[#23184A]/85 border border-white/95 dark:border-[#C4B5FD]/25 shadow-sm flex items-center justify-center relative">
+                <span className="absolute top-2 left-2 w-2.5 h-2.5 border-t-2 border-l-2 border-[#6334E8] dark:border-[#C4B5FD] rounded-tl-xs" />
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 border-t-2 border-r-2 border-[#6334E8] dark:border-[#C4B5FD] rounded-tr-xs" />
+                <span className="absolute bottom-2 left-2 w-2.5 h-2.5 border-b-2 border-l-2 border-[#6334E8] dark:border-[#C4B5FD] rounded-bl-xs" />
+                <span className="absolute bottom-2 right-2 w-2.5 h-2.5 border-b-2 border-r-2 border-[#6334E8] dark:border-[#C4B5FD] rounded-br-xs" />
+                <QrCode className="w-7 h-7 text-[#6334E8] dark:text-[#C4B5FD]" />
               </div>
               <div>
-                <h2 className="font-display font-bold text-xl text-[#17143A]">Scan Official QR</h2>
-                <p className="text-sm text-[#433E68] mt-1.5 leading-relaxed">
+                <h2 className="font-display font-bold text-xl text-[#17143A] dark:text-[#F4F2FF]">Scan Official QR</h2>
+                <p className="text-sm text-[#433E68] dark:text-[#C5BFE4] mt-1.5 leading-relaxed">
                   Point your camera at the host’s projected QR code or upload a QR image. Every scan is verified server-side against the active rotating token.
                 </p>
               </div>
@@ -366,9 +368,9 @@ export function StudentPortal() {
             <button
               type="button"
               onClick={() => setScannerOpen(true)}
-              className="tp-glass-btn relative z-10 w-full text-[#0F1035] font-semibold text-sm py-3.5 px-6 rounded-full flex items-center justify-center gap-2 cursor-pointer"
+              className="tp-glass-btn relative z-10 w-full text-[#0F1035] dark:text-[#F4F2FF] font-semibold text-sm py-3.5 px-6 rounded-full flex items-center justify-center gap-2 cursor-pointer"
             >
-              <QrCode className="w-4 h-4 text-[#6D28D9]" />
+              <QrCode className="w-4 h-4 text-[#6D28D9] dark:text-[#C4B5FD]" />
               <span>Open QR Scanner</span>
             </button>
           </motion.div>
@@ -376,16 +378,16 @@ export function StudentPortal() {
 
         {/* Recent Submitted Sessions */}
         <section className="tp-surface rounded-[28px] overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#17143A]/8 flex items-center justify-between">
+          <div className="px-6 py-4 border-b border-[#17143A]/8 dark:border-white/10 flex items-center justify-between">
             <div>
-              <h2 className="font-display font-bold text-lg text-[#17143A]">
+              <h2 className="font-display font-bold text-lg text-[#17143A] dark:text-[#F4F2FF]">
                 Recent Submitted Sessions
               </h2>
-              <p className="text-xs text-[#5B617A]">
+              <p className="text-xs text-[#5B617A] dark:text-[#A49EC6]">
                 Review your scores, written feedback, and poll confirmations.
               </p>
             </div>
-            <span className="text-xs font-mono text-[#5B617A] tabular-nums">
+            <span className="text-xs font-mono text-[#5B617A] dark:text-[#A49EC6] tabular-nums">
               {recentSubmissions.length} total
             </span>
           </div>
@@ -393,37 +395,37 @@ export function StudentPortal() {
           {loadingRecent ? (
             <div className="p-6 space-y-3">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="h-14 rounded-2xl bg-white/60 animate-pulse" />
+                <div key={n} className="h-14 rounded-2xl bg-white/60 dark:bg-white/10 animate-pulse" />
               ))}
             </div>
           ) : recentSubmissions.length === 0 ? (
             <div className="p-10 text-center space-y-2">
-              <p className="text-sm font-semibold text-[#17143A]">No completed sessions yet</p>
-              <p className="text-xs text-[#5B617A] max-w-sm mx-auto">
+              <p className="text-sm font-semibold text-[#17143A] dark:text-[#F4F2FF]">No completed sessions yet</p>
+              <p className="text-xs text-[#5B617A] dark:text-[#A49EC6] max-w-sm mx-auto">
                 Join an active quiz or poll above using a six-digit code or official QR to see your results and feedback here.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-[#17143A]/8">
+            <div className="divide-y divide-[#17143A]/8 dark:divide-white/10">
               {recentSubmissions.map((sub) => (
                 <button
                   key={sub.id}
                   type="button"
                   onClick={() => setViewingSubmissionId(sub.id)}
-                  className="w-full text-left px-6 py-4 hover:bg-white/65 transition-colors flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full text-left px-6 py-4 hover:bg-white/65 dark:hover:bg-white/8 transition-colors flex items-center justify-between gap-4 cursor-pointer"
                 >
                   <div className="min-w-0">
-                    <p className="font-semibold text-sm text-[#17143A] truncate">
+                    <p className="font-semibold text-sm text-[#17143A] dark:text-[#F4F2FF] truncate">
                       {sub.assessmentTitle}
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#5B617A] mt-1">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#5B617A] dark:text-[#A49EC6] mt-1">
                       <span className="capitalize">{sub.assessmentType}</span>
                       <span aria-hidden="true">·</span>
                       <span className="capitalize">{sub.privacyMode} mode</span>
                       {sub.anonId && (
                         <>
                           <span aria-hidden="true">·</span>
-                          <span className="font-mono text-[#6334E8]">{sub.anonId}</span>
+                          <span className="font-mono text-[#6334E8] dark:text-[#C4B5FD]">{sub.anonId}</span>
                         </>
                       )}
                       <span aria-hidden="true">·</span>
@@ -436,24 +438,24 @@ export function StudentPortal() {
                   <div className="flex items-center gap-4 shrink-0">
                     {sub.assessmentType === 'quiz' ? (
                       <div className="text-right">
-                        <p className="font-mono font-bold text-sm text-[#17143A] tabular-nums">
+                        <p className="font-mono font-bold text-sm text-[#17143A] dark:text-[#F4F2FF] tabular-nums">
                           {sub.totalScore} / {sub.maxScore}
                         </p>
-                        <p className="text-xs text-[#5B617A] flex items-center justify-end gap-1">
+                        <p className="text-xs text-[#5B617A] dark:text-[#A49EC6] flex items-center justify-end gap-1">
                           {sub.status === 'pending_review' ? (
                             <>
-                              <Clock className="w-3 h-3 text-amber-600" />
-                              <span className="text-amber-700 font-medium">Pending review</span>
+                              <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                              <span className="text-amber-700 dark:text-amber-300 font-medium">Pending review</span>
                             </>
                           ) : (
-                            <span className="text-emerald-700 font-medium">Reviewed</span>
+                            <span className="text-emerald-700 dark:text-emerald-300 font-medium">Reviewed</span>
                           )}
                         </p>
                       </div>
                     ) : (
-                      <span className="text-xs font-semibold text-emerald-700">Recorded</span>
+                      <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Recorded</span>
                     )}
-                    <ChevronRight className="w-4 h-4 text-[#8E93AB]" />
+                    <ChevronRight className="w-4 h-4 text-[#8E93AB] dark:text-[#A49EC6]" />
                   </div>
                 </button>
               ))}

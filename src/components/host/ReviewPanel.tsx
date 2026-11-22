@@ -154,17 +154,17 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
             type="button"
             onClick={onBack}
             aria-label="Back to quizzes"
-            className="tp-glass-btn p-2.5 rounded-xl text-[#17143A] cursor-pointer shrink-0"
+            className="tp-glass-btn p-2.5 rounded-xl text-[#17143A] dark:text-[#F4F2FF] cursor-pointer shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <p className="text-xs font-medium text-[#433E68] flex items-center gap-1.5">
+            <p className="text-xs font-medium text-[#433E68] dark:text-[#C5BFE4] flex items-center gap-1.5">
               <span>Submission Review & Grading</span>
               <span aria-hidden="true">·</span>
               <span className="capitalize">{assessment.privacyMode} mode</span>
             </p>
-            <h1 className="font-display font-bold text-xl sm:text-2xl text-[#17143A] tracking-tight">
+            <h1 className="font-display font-bold text-xl sm:text-2xl text-[#17143A] dark:text-[#F4F2FF] tracking-tight">
               {assessment.title}
             </h1>
           </div>
@@ -174,12 +174,12 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
           type="button"
           disabled={recalculating}
           onClick={handleRecalculateAll}
-          className="tp-glass-btn inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-[#17143A] whitespace-nowrap cursor-pointer disabled:opacity-60"
+          className="tp-glass-btn inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] whitespace-nowrap cursor-pointer disabled:opacity-60"
         >
           {recalculating ? (
-            <Loader2 className="w-4 h-4 animate-spin text-[#6334E8]" />
+            <Loader2 className="w-4 h-4 animate-spin text-[#6334E8] dark:text-[#C4B5FD]" />
           ) : (
-            <RefreshCw className="w-4 h-4 text-[#6334E8]" />
+            <RefreshCw className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD]" />
           )}
           <span>Recalculate Objective Grades</span>
         </button>
@@ -188,9 +188,9 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
       {error && (
         <div
           role="alert"
-          className="rounded-2xl bg-rose-50/90 backdrop-blur-md border border-rose-200 px-4 py-3 text-sm text-rose-800 flex items-center gap-2"
+          className="rounded-2xl bg-rose-50/90 dark:bg-rose-950/60 backdrop-blur-md border border-rose-200 dark:border-rose-400/30 px-4 py-3 text-sm text-rose-800 dark:text-rose-200 flex items-center gap-2"
         >
-          <AlertCircle className="w-4 h-4 shrink-0" />
+          <AlertCircle className="w-4 h-4 shrink-0 dark:text-rose-400" />
           <span>{error}</span>
         </div>
       )}
@@ -198,9 +198,9 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
       {notice && (
         <div
           role="status"
-          className="rounded-2xl bg-emerald-50/90 backdrop-blur-md border border-emerald-200 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2"
+          className="rounded-2xl bg-emerald-50/90 dark:bg-emerald-950/55 backdrop-blur-md border border-emerald-200 dark:border-emerald-400/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200 flex items-center gap-2"
         >
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <CheckCircle2 className="w-4 h-4 shrink-0 dark:text-emerald-400" />
           <span>{notice}</span>
         </div>
       )}
@@ -208,16 +208,16 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left: Frosted Submission List */}
         <div className="lg:col-span-4 tp-surface rounded-[24px] overflow-hidden lg:sticky lg:top-[84px]">
-          <div className="px-4 py-3.5 border-b border-[#17143A]/8 bg-white/45 flex items-center justify-between gap-2">
-            <span className="text-xs font-bold text-[#17143A] tabular-nums">
+          <div className="px-4 py-3.5 border-b border-[#17143A]/8 dark:border-white/10 bg-white/45 dark:bg-white/5 flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-[#17143A] dark:text-[#F4F2FF] tabular-nums">
               Submissions ({submissions.length})
             </span>
             {assessment.privacyMode === 'anonymous' ? (
-              <span className="inline-flex items-center gap-1 text-[11px] text-[#6334E8] font-semibold">
+              <span className="inline-flex items-center gap-1 text-[11px] text-[#6334E8] dark:text-[#C4B5FD] font-semibold">
                 <EyeOff className="w-3 h-3" /> Anonymous IDs only
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[11px] text-[#4F46E5] font-semibold">
+              <span className="inline-flex items-center gap-1 text-[11px] text-[#4F46E5] dark:text-[#A5B4FC] font-semibold">
                 <UserCheck className="w-3 h-3" /> Student identity
               </span>
             )}
@@ -226,15 +226,15 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
           {loadingList ? (
             <div className="p-4 space-y-2.5">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="h-14 rounded-xl bg-white/50 animate-pulse" />
+                <div key={n} className="h-14 rounded-xl bg-white/50 dark:bg-white/6 animate-pulse" />
               ))}
             </div>
           ) : submissions.length === 0 ? (
-            <div className="p-8 text-center text-xs text-[#5B617A]">
+            <div className="p-8 text-center text-xs text-[#5B617A] dark:text-[#A49EC6]">
               No submissions recorded for this quiz yet.
             </div>
           ) : (
-            <div className="divide-y divide-[#17143A]/8 max-h-[650px] overflow-y-auto">
+            <div className="divide-y divide-[#17143A]/8 dark:divide-white/10 max-h-[650px] overflow-y-auto">
               {submissions.map((s) => {
                 const active = s.id === selectedId;
                 return (
@@ -247,26 +247,28 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                     }}
                     className={`w-full text-left px-4 py-3.5 transition-all cursor-pointer ${
                       active
-                        ? 'bg-[#6334E8]/12 ring-1 ring-inset ring-[#6334E8]/30'
-                        : 'hover:bg-white/55'
+                        ? 'bg-[#6334E8]/12 dark:bg-[#8B5CF6]/22 ring-1 ring-inset ring-[#6334E8]/30 dark:ring-[#C4B5FD]/35'
+                        : 'hover:bg-white/55 dark:hover:bg-white/6'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <p className="font-semibold text-sm text-[#17143A] truncate">
+                      <p className="font-semibold text-sm text-[#17143A] dark:text-[#F4F2FF] truncate">
                         {s.participantLabel}
                       </p>
-                      <span className="font-mono text-xs font-bold text-[#6334E8] tabular-nums shrink-0">
+                      <span className="font-mono text-xs font-bold text-[#6334E8] dark:text-[#C4B5FD] tabular-nums shrink-0">
                         {s.totalScore} / {s.maxScore}
                       </span>
                     </div>
                     {s.participantEmail && (
-                      <p className="text-xs text-[#5B617A] truncate mt-0.5">{s.participantEmail}</p>
+                      <p className="text-xs text-[#5B617A] dark:text-[#A49EC6] truncate mt-0.5">{s.participantEmail}</p>
                     )}
-                    <div className="flex items-center justify-between text-[11px] text-[#5B617A] mt-1.5">
+                    <div className="flex items-center justify-between text-[11px] text-[#5B617A] dark:text-[#8E88B0] mt-1.5">
                       <span className="tabular-nums">{new Date(s.submittedAt).toLocaleString()}</span>
                       <span
                         className={`font-semibold flex items-center gap-1 ${
-                          s.status === 'pending_review' ? 'text-amber-700' : 'text-emerald-700'
+                          s.status === 'pending_review'
+                            ? 'text-amber-700 dark:text-amber-300'
+                            : 'text-emerald-700 dark:text-emerald-300'
                         }`}
                       >
                         {s.status === 'pending_review' && <Clock className="w-3 h-3" />}
@@ -283,33 +285,33 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
         {/* Right: Grading Detail */}
         <div className="lg:col-span-8 space-y-4">
           {loadingDetail ? (
-            <div className="tp-surface rounded-[24px] p-12 flex items-center justify-center gap-2.5 text-sm text-[#433E68]">
-              <Loader2 className="w-5 h-5 animate-spin text-[#6334E8]" />
+            <div className="tp-surface rounded-[24px] p-12 flex items-center justify-center gap-2.5 text-sm text-[#433E68] dark:text-[#C5BFE4]">
+              <Loader2 className="w-5 h-5 animate-spin text-[#6334E8] dark:text-[#C4B5FD]" />
               <span>Loading submission answers...</span>
             </div>
           ) : !detail ? (
-            <div className="tp-surface rounded-[24px] p-12 text-center text-sm text-[#5B617A]">
+            <div className="tp-surface rounded-[24px] p-12 text-center text-sm text-[#5B617A] dark:text-[#A49EC6]">
               Select a submission from the left to inspect answers and save marks.
             </div>
           ) : (
             <>
               <div className="tp-surface rounded-[24px] p-5 sm:p-6 space-y-5">
-                <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-[#17143A]/8">
+                <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-[#17143A]/8 dark:border-white/10">
                   <div>
-                    <h2 className="font-display font-bold text-lg text-[#17143A]">
+                    <h2 className="font-display font-bold text-lg text-[#17143A] dark:text-[#F4F2FF]">
                       {detail.participantLabel}
                     </h2>
-                    <p className="text-xs text-[#5B617A] mt-0.5">
+                    <p className="text-xs text-[#5B617A] dark:text-[#A49EC6] mt-0.5">
                       {detail.participantEmail ? `${detail.participantEmail} · ` : ''}
                       Submitted {new Date(detail.submittedAt).toLocaleString()}
                       {detail.autoSubmitted ? ' · Auto-submitted at expiry' : ''}
                     </p>
                   </div>
                   <div className="tp-glass-inset rounded-2xl px-4 py-2.5 text-right">
-                    <p className="font-mono text-2xl font-bold text-[#6334E8] tabular-nums leading-none">
+                    <p className="font-mono text-2xl font-bold text-[#6334E8] dark:text-[#C4B5FD] tabular-nums leading-none">
                       {detail.totalScore} / {detail.maxScore}
                     </p>
-                    <p className="text-[11px] font-medium text-[#433E68] mt-1">
+                    <p className="text-[11px] font-medium text-[#433E68] dark:text-[#C5BFE4] mt-1">
                       {detail.status === 'pending_review' ? 'Pending manual review' : 'Reviewed'}
                     </p>
                   </div>
@@ -330,12 +332,12 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <span className="font-mono text-xs font-semibold text-[#6334E8]">
-                              Q{idx + 1} · <span className="capitalize text-[#5B617A] font-sans font-medium">{item.type.replace('_', ' ')}</span>
+                            <span className="font-mono text-xs font-semibold text-[#6334E8] dark:text-[#C4B5FD]">
+                              Q{idx + 1} · <span className="capitalize text-[#5B617A] dark:text-[#A49EC6] font-sans font-medium">{item.type.replace('_', ' ')}</span>
                             </span>
-                            <p className="font-semibold text-sm text-[#17143A] mt-0.5">{item.text}</p>
+                            <p className="font-semibold text-sm text-[#17143A] dark:text-[#F4F2FF] mt-0.5">{item.text}</p>
                           </div>
-                          <span className="font-mono text-xs text-[#6334E8] font-bold shrink-0 tabular-nums">
+                          <span className="font-mono text-xs text-[#6334E8] dark:text-[#C4B5FD] font-bold shrink-0 tabular-nums">
                             Max {item.points}
                           </span>
                         </div>
@@ -350,11 +352,11 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                                   className={`px-3.5 py-2.5 rounded-xl text-xs border flex items-center justify-between backdrop-blur-sm ${
                                     selected
                                       ? o.isCorrect
-                                        ? 'bg-emerald-50/85 border-emerald-200 text-emerald-950 font-semibold'
-                                        : 'bg-rose-50/85 border-rose-200 text-rose-950 font-semibold'
+                                        ? 'bg-emerald-50/85 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-400/35 text-emerald-950 dark:text-emerald-200 font-semibold'
+                                        : 'bg-rose-50/85 dark:bg-rose-950/60 border-rose-200 dark:border-rose-400/35 text-rose-950 dark:text-rose-200 font-semibold'
                                       : o.isCorrect
-                                      ? 'bg-emerald-50/45 border-emerald-200/80 text-[#17143A]'
-                                      : 'bg-white/55 border-white/80 text-[#5B617A]'
+                                      ? 'bg-emerald-50/45 dark:bg-emerald-950/35 border-emerald-200/80 dark:border-emerald-400/25 text-[#17143A] dark:text-emerald-100'
+                                      : 'bg-white/55 dark:bg-white/5 border-white/80 dark:border-white/10 text-[#5B617A] dark:text-[#A49EC6]'
                                   }`}
                                 >
                                   <span>{o.label}</span>
@@ -368,20 +370,20 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                           </div>
                         ) : (
                           <div className="space-y-2.5">
-                            <div className="rounded-xl bg-white/75 border border-white/90 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-                              <p className="text-[11px] font-semibold text-[#5B617A] mb-1">
+                            <div className="rounded-xl bg-white/75 dark:bg-[#140E2E]/85 border border-white/90 dark:border-white/12 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:shadow-none">
+                              <p className="text-[11px] font-semibold text-[#5B617A] dark:text-[#A49EC6] mb-1">
                                 Participant Answer (Immutable)
                               </p>
-                              <p className="text-sm text-[#17143A] whitespace-pre-wrap leading-relaxed">
+                              <p className="text-sm text-[#17143A] dark:text-[#F4F2FF] whitespace-pre-wrap leading-relaxed">
                                 {item.textAnswer || '(Blank response)'}
                               </p>
                             </div>
                             {item.rubric && (
-                              <div className="rounded-xl bg-[#6334E8]/8 border border-[#6334E8]/20 p-3.5">
-                                <p className="text-[11px] font-semibold text-[#6334E8] mb-0.5">
+                              <div className="rounded-xl bg-[#6334E8]/8 dark:bg-[#8B5CF6]/18 border border-[#6334E8]/20 dark:border-[#C4B5FD]/25 p-3.5">
+                                <p className="text-[11px] font-semibold text-[#6334E8] dark:text-[#C4B5FD] mb-0.5">
                                   Grading Rubric / Reference Answer
                                 </p>
-                                <p className="text-xs text-[#433E68] whitespace-pre-wrap leading-relaxed">
+                                <p className="text-xs text-[#433E68] dark:text-[#E5E0FF] whitespace-pre-wrap leading-relaxed">
                                   {item.rubric}
                                 </p>
                               </div>
@@ -390,9 +392,9 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                         )}
 
                         {/* Marks & Feedback Editor */}
-                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-3 border-t border-[#17143A]/8">
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-3 border-t border-[#17143A]/8 dark:border-white/10">
                           <div className="sm:col-span-4">
-                            <label className="block text-[11px] font-semibold text-[#433E68] mb-1">
+                            <label className="block text-[11px] font-semibold text-[#433E68] dark:text-[#C5BFE4] mb-1">
                               Awarded Marks (0 – {item.points})
                             </label>
                             <div className="flex items-center gap-1.5">
@@ -414,7 +416,7 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                                     },
                                   }))
                                 }
-                                className="tp-input w-full rounded-xl px-3 py-1.5 text-sm font-mono tabular-nums"
+                                className="tp-input w-full rounded-xl px-3 py-1.5 text-sm font-mono tabular-nums text-[#17143A] dark:text-[#F4F2FF]"
                               />
                               <button
                                 type="button"
@@ -424,7 +426,7 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                                     [item.questionId]: { ...entry, awardedPoints: item.points },
                                   }))
                                 }
-                                className="tp-glass-btn px-2.5 py-1.5 rounded-xl text-emerald-800 text-[11px] font-semibold cursor-pointer whitespace-nowrap"
+                                className="tp-glass-btn px-2.5 py-1.5 rounded-xl text-emerald-800 dark:text-emerald-300 text-[11px] font-semibold cursor-pointer whitespace-nowrap"
                               >
                                 Full
                               </button>
@@ -432,7 +434,7 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                           </div>
 
                           <div className="sm:col-span-8">
-                            <label className="block text-[11px] font-semibold text-[#433E68] mb-1">
+                            <label className="block text-[11px] font-semibold text-[#433E68] dark:text-[#C5BFE4] mb-1">
                               Feedback for participant
                             </label>
                             <input
@@ -445,7 +447,7 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
                                 }))
                               }
                               placeholder="Optional grading notes or explanation..."
-                              className="tp-input w-full rounded-xl px-3 py-1.5 text-sm text-[#17143A]"
+                              className="tp-input w-full rounded-xl px-3 py-1.5 text-sm text-[#17143A] dark:text-[#F4F2FF]"
                             />
                           </div>
                         </div>
@@ -458,8 +460,8 @@ export function ReviewPanel({ assessment, refreshTick, onBack }: ReviewPanelProp
               {/* Sticky Floating Frosted Grading Save Dock */}
               <div className="sticky bottom-4 z-20 tp-glass rounded-2xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-medium text-[#433E68]">Draft Score Preview</span>
-                  <span className="font-mono text-lg font-bold text-[#6334E8] tabular-nums">
+                  <span className="text-xs font-medium text-[#433E68] dark:text-[#C5BFE4]">Draft Score Preview</span>
+                  <span className="font-mono text-lg font-bold text-[#6334E8] dark:text-[#C4B5FD] tabular-nums">
                     {liveDraftTotal} / {detail.maxScore}
                   </span>
                 </div>

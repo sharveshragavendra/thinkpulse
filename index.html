@@ -15,8 +15,18 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('tp_theme');
+          if (saved === 'dark') {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
   </head>
-  <body class="bg-[#F4F1FF] text-[#17143A] antialiased selection:bg-[#6334E8]/15 selection:text-[#6334E8]">
+  <body class="bg-[#F4F1FF] dark:bg-[#080515] text-[#17143A] dark:text-[#F4F2FF] antialiased selection:bg-[#6334E8]/15 dark:selection:bg-[#8B5CF6]/30 selection:text-[#6334E8] dark:selection:text-[#DDD6FE]">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
