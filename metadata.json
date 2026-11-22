@@ -1,0 +1,6 @@
+{
+  "name": "ThinkPulse",
+  "description": "A classroom interaction, assessment, and feedback platform with live QR entry, quizzes, polls, student-linked reporting, and privacy-preserving anonymous participation.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
