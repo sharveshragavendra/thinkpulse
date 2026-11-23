@@ -142,7 +142,17 @@ export const verifyQrSchema = z.object({
   payload: z.string().trim().min(5).max(1000),
 });
 
+export const publicVerifyQrSchema = z.object({
+  sid: z.string().uuid('Invalid session identifier.'),
+  token: z.string().trim().min(10, 'Invalid QR token.').max(200),
+});
+
 export const startSessionSchema = z.object({
+  alias: z.string().trim().max(60).optional(),
+});
+
+export const publicStartSessionSchema = z.object({
+  qrToken: z.string().trim().min(10, 'Invalid QR token.').max(200),
   alias: z.string().trim().max(60).optional(),
 });
 

@@ -243,3 +243,27 @@ test('QR payload roundtrip, scrypt password hashing, anonymous ID format, and SS
   });
   assert.equal(blockedHttpProd.valid, false);
 });
+
+test('direct HTTPS anonymous QR URL roundtrip and guest result receipt token integrity', async () => {
+  const { signGuestResultToken, verifyGuestResultToken, timingSafeEqualStrings } = await import(
+    '../server/utils/crypto.ts'
+  );
+
+  const sid = '550e8400-e29b-41d4-a716-446655440000';
+  const tok = 'qr_anon_token_123456';
+  const webQr = buildOfficialQrPayload(sid, tok, 'https://thinkpulse.example.run.app/dashboard');
+  assert.equal(webQr, `https://thinkpulse.example.run.app/join?sid=${sid}&t=${tok}`);
+  assert.deepEqual(parseOfficialQrPayload(webQr), { sessionId: sid, token: tok });
+
+  // Invalid / non-http scheme falls back safely to thinkpulse://
+  const fallbackQr = buildOfficialQrPayload(sid, tok, 'javascript:alert(1)');
+  assert.ok(fallbackQr.startsWith('thinkpulse://join?'));
+
+  const receipt = signGuestResultToken({ subId: 'sub-123', sid });
+  const verified = verifyGuestResultToken(receipt);
+  assert.equal(verified?.subId, 'sub-123');
+  assert.equal(verified?.sid, sid);
+  assert.equal(verifyGuestResultToken(`${receipt}tampered`), null);
+  assert.equal(timingSafeEqualStrings('abc', 'abc'), true);
+  assert.equal(timingSafeEqualStrings('abc', 'abd'), false);
+});

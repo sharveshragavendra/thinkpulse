@@ -83,13 +83,54 @@ const hostManageRateLimit = createRateLimiter('host-manage', 25, 60_000);
 
 router.use('/host', requireAuth, requireHost);
 
+function resolvePublicAppOrigin(req?: AuthRequest): string | null {
+  const candidates: string[] = [];
+  if (req) {
+    const originHeader = req.get('origin');
+    if (originHeader) candidates.push(originHeader);
+
+    const refererHeader = req.get('referer');
+    if (refererHeader) candidates.push(refererHeader);
+
+    const fwdHost = req.get('x-forwarded-host')?.split(',')[0]?.trim();
+    const fwdProto = req.get('x-forwarded-proto')?.split(',')[0]?.trim() || 'https';
+    if (fwdHost) candidates.push(`${fwdProto}://${fwdHost}`);
+
+    const host = req.get('host');
+    if (host) candidates.push(`${req.protocol || 'https'}://${host}`);
+  }
+  if (process.env.APP_URL) candidates.push(process.env.APP_URL.trim());
+
+  for (const raw of candidates) {
+    try {
+      const parsed = new URL(raw);
+      if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+        return parsed.origin;
+      }
+    } catch {
+      // ignore invalid origin candidate
+    }
+  }
+  return null;
+}
+
 async function serializeSessionForHost(
   s: typeof sessions.$inferSelect,
-  extras?: { assessmentTitle?: string; assessmentType?: AssessmentType; submissionCount?: number }
+  extras?: {
+    assessmentTitle?: string;
+    assessmentType?: AssessmentType;
+    submissionCount?: number;
+    publicOrigin?: string | null;
+  }
 ): Promise<SessionDTO> {
   const now = new Date();
   const effectiveStatus = computeEffectiveSessionStatus(s.status, s.expiresAt, now);
-  const qrPayload = buildOfficialQrPayload(s.id, s.qrTokenRaw);
+  // Only anonymous sessions get a direct browser-openable HTTPS join URL in their QR code
+  const qrPayload = buildOfficialQrPayload(
+    s.id,
+    s.qrTokenRaw,
+    s.privacyMode === 'anonymous' ? extras?.publicOrigin : null
+  );
   const qrDataUrl = await QRCode.toDataURL(qrPayload, {
     width: 720,
     margin: 2,
@@ -222,12 +263,14 @@ router.get('/host/overview', async (req: AuthRequest, res) => {
       : [];
     const subCountMap = new Map(subCounts.map((c) => [c.sessionId, Number(c.cnt)]));
 
+    const publicOrigin = resolvePublicAppOrigin(req);
     const activeSessionsList = await Promise.all(
       trulyActive.map((r) =>
         serializeSessionForHost(r.session, {
           assessmentTitle: r.assessmentTitle,
           assessmentType: r.assessmentType as AssessmentType,
           submissionCount: subCountMap.get(r.session.id) ?? 0,
+          publicOrigin,
         })
       )
     );
@@ -359,6 +402,7 @@ router.get('/host/assessments', async (req: AuthRequest, res) => {
                 assessmentTitle: r.title,
                 assessmentType: r.type as AssessmentType,
                 submissionCount: subCount,
+                publicOrigin: resolvePublicAppOrigin(req),
               })
             : null,
           createdAt: r.createdAt.toISOString(),
@@ -451,6 +495,7 @@ router.get('/host/assessments/:id', async (req: AuthRequest, res) => {
             assessmentTitle: a.title,
             assessmentType: a.type as AssessmentType,
             submissionCount: Number(subCount),
+            publicOrigin: resolvePublicAppOrigin(req),
           })
         : null,
       questions: qRows.map((q) => ({
@@ -975,6 +1020,7 @@ router.post('/host/assessments/:id/launch', async (req: AuthRequest, res) => {
       assessmentTitle: assessment.title,
       assessmentType: assessment.type as AssessmentType,
       submissionCount: 0,
+      publicOrigin: resolvePublicAppOrigin(req),
     });
 
     return res.status(201).json({ session: dto });
@@ -1020,12 +1066,14 @@ router.get('/host/sessions', async (req: AuthRequest, res) => {
       return true;
     });
 
+    const publicOrigin = resolvePublicAppOrigin(req);
     const list = await Promise.all(
       filtered.map((r) =>
         serializeSessionForHost(r.session, {
           assessmentTitle: r.assessmentTitle,
           assessmentType: r.assessmentType as AssessmentType,
           submissionCount: subMap.get(r.session.id) ?? 0,
+          publicOrigin,
         })
       )
     );
@@ -1088,6 +1136,7 @@ router.post('/host/sessions/:id/qr/rotate', async (req: AuthRequest, res) => {
     const dto = await serializeSessionForHost(updated, {
       assessmentTitle,
       assessmentType: assessmentType as AssessmentType,
+      publicOrigin: resolvePublicAppOrigin(req),
     });
     return res.json({ session: dto });
   } catch (err) {
@@ -1156,6 +1205,7 @@ router.post('/host/sessions/:id/extend', async (req: AuthRequest, res) => {
     const dto = await serializeSessionForHost(updated, {
       assessmentTitle,
       assessmentType: assessmentType as AssessmentType,
+      publicOrigin: resolvePublicAppOrigin(req),
     });
     return res.json({ session: dto });
   } catch (err) {
@@ -1210,6 +1260,7 @@ router.post('/host/sessions/:id/end', async (req: AuthRequest, res) => {
     const dto = await serializeSessionForHost(updated, {
       assessmentTitle,
       assessmentType: assessmentType as AssessmentType,
+      publicOrigin: resolvePublicAppOrigin(req),
     });
     return res.json({ session: dto });
   } catch (err) {

@@ -68,7 +68,22 @@ export function LoginPage() {
     try {
       await loginWithGoogle();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Google sign-in could not be completed.');
+      const code =
+        typeof err === 'object' && err !== null && 'code' in err
+          ? String((err as { code?: unknown }).code)
+          : '';
+      const rawMessage = err instanceof Error ? err.message : '';
+      if (code === 'auth/unauthorized-domain' || rawMessage.includes('auth/unauthorized-domain')) {
+        setError(
+          `This domain (${window.location.hostname}) is not authorized for Google Sign-In. Add it in Firebase Console → Authentication → Settings → Authorized domains.`
+        );
+      } else if (code === 'auth/popup-blocked') {
+        setError('Sign-in popup was blocked by your browser. Please allow popups and try again.');
+      } else if (code === 'auth/popup-closed-by-user') {
+        setError('Google sign-in window was closed before completing sign-in.');
+      } else {
+        setError(rawMessage || 'Google sign-in could not be completed.');
+      }
     }
   };
 

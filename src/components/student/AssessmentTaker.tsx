@@ -18,8 +18,9 @@ import type { PublicSessionDTO } from '../../../shared/types.ts';
 
 interface AssessmentTakerProps {
   session: PublicSessionDTO;
+  guestQrToken?: string;
   onExit: () => void;
-  onSubmitted: (submissionId: string) => void;
+  onSubmitted: (submissionId: string, guestResultToken?: string) => void;
 }
 
 function formatTimer(seconds: number): string {
@@ -28,7 +29,7 @@ function formatTimer(seconds: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTakerProps) {
+export function AssessmentTaker({ session, guestQrToken, onExit, onSubmitted }: AssessmentTakerProps) {
   const [stage, setStage] = useState<'instructions' | 'taking'>('instructions');
   const [alias, setAlias] = useState('');
   const [sessionToken, setSessionToken] = useState<string | null>(null);
@@ -81,8 +82,12 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
           };
         });
 
-        const res = await apiRequest<{ submissionId: string }>(
-          `/sessions/${session.sessionId}/submissions`,
+        const submitPath = guestQrToken
+          ? `/public/sessions/${session.sessionId}/submissions`
+          : `/sessions/${session.sessionId}/submissions`;
+
+        const res = await apiRequest<{ submissionId: string; resultToken?: string }>(
+          submitPath,
           {
             method: 'POST',
             body: {
@@ -94,7 +99,7 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
           }
         );
         setConfirmOpen(false);
-        onSubmitted(res.submissionId);
+        onSubmitted(res.submissionId, res.resultToken);
       } catch (err: unknown) {
         setConfirmOpen(false);
         setError(err instanceof Error ? err.message : 'Unable to submit your response.');
@@ -102,7 +107,7 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
         setSubmitting(false);
       }
     },
-    [alias, onSubmitted, session.privacyMode, session.questions, session.sessionId, sessionToken, submitting]
+    [alias, guestQrToken, onSubmitted, session.privacyMode, session.questions, session.sessionId, sessionToken, submitting]
   );
 
   // Authoritative server-synced display countdown + auto-submit on expiry (Quizzes only)
@@ -128,14 +133,25 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
     setError(null);
     setStarting(true);
     try {
+      const startPath = guestQrToken
+        ? `/public/sessions/${session.sessionId}/start`
+        : `/sessions/${session.sessionId}/start`;
+
       const res = await apiRequest<{
         sessionToken: string;
         anonId: string | null;
         expiresAt: string;
         serverTime: string;
-      }>(`/sessions/${session.sessionId}/start`, {
+      }>(startPath, {
         method: 'POST',
-        body: { alias: session.privacyMode === 'anonymous' ? alias.trim() || undefined : undefined },
+        body: guestQrToken
+          ? {
+              qrToken: guestQrToken,
+              alias: alias.trim() || undefined,
+            }
+          : {
+              alias: session.privacyMode === 'anonymous' ? alias.trim() || undefined : undefined,
+            },
       });
       setSessionToken(res.sessionToken);
       setAnonId(res.anonId);
@@ -183,7 +199,7 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6334E8] dark:text-[#C4B5FD] hover:text-[#4F46E5] dark:hover:text-white cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Student Portal
+            {guestQrToken ? 'ThinkPulse Sign In' : 'Back to Student Portal'}
           </button>
           <ThemeToggle compact />
         </div>
@@ -240,7 +256,9 @@ export function AssessmentTaker({ session, onExit, onSubmitted }: AssessmentTake
               </p>
               <p className="text-xs text-[#5B617A] dark:text-[#A49EC6] leading-relaxed">
                 {session.privacyMode === 'anonymous'
-                  ? 'A random anonymous ID will be generated for your response. Your name, email, and student ID are never exposed to the host in dashboards, Data Retrieval, or CSV exports. You can still view your own result privately inside your portal.'
+                  ? guestQrToken
+                    ? 'Direct QR join — no Google Sign-In required. A random anonymous ID will be generated for your response, and your identity is completely hidden from the host.'
+                    : 'A random anonymous ID will be generated for your response. Your name, email, and student ID are never exposed to the host in dashboards, Data Retrieval, or CSV exports. You can still view your own result privately inside your portal.'
                   : 'Your name, email, and individual responses will be recorded against your student profile and visible to authorized hosts in your institution.'}
               </p>
             </div>

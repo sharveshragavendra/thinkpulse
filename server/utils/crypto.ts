@@ -105,11 +105,19 @@ export function generateAnonymousId(): string {
   return `ANON-${suffix}`;
 }
 
+export function timingSafeEqualStrings(a: string, b: string): boolean {
+  const bufA = Buffer.from(a, 'utf8');
+  const bufB = Buffer.from(b, 'utf8');
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
 export interface SessionAttemptTokenPayload {
   sid: string; // sessionId
   mode: 'anonymous' | 'normal';
   anonId?: string;
   studentId?: string;
+  guest?: boolean;
   startedAt: string;
   nonce: string;
   exp: number;
@@ -145,6 +153,48 @@ export function verifySessionAttemptToken(token: string): SessionAttemptTokenPay
   try {
     const parsed = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as SessionAttemptTokenPayload;
     if (!parsed.sid || !parsed.exp || parsed.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export interface GuestResultTokenPayload {
+  subId: string;
+  sid: string;
+  exp: number;
+}
+
+export function signGuestResultToken(
+  payload: Omit<GuestResultTokenPayload, 'exp'>,
+  ttlSeconds = 60 * 60 * 6
+): string {
+  const full: GuestResultTokenPayload = {
+    ...payload,
+    exp: Math.floor(Date.now() / 1000) + ttlSeconds,
+  };
+  const encoded = Buffer.from(JSON.stringify(full), 'utf8').toString('base64url');
+  const sig = crypto
+    .createHmac('sha256', getSessionSecret())
+    .update(`guest-result:${encoded}`)
+    .digest('base64url');
+  return `tpr1.${encoded}.${sig}`;
+}
+
+export function verifyGuestResultToken(token: string): GuestResultTokenPayload | null {
+  const parts = token.split('.');
+  if (parts.length !== 3 || parts[0] !== 'tpr1') return null;
+  const [, encoded, sig] = parts;
+  const expectedSig = crypto
+    .createHmac('sha256', getSessionSecret())
+    .update(`guest-result:${encoded}`)
+    .digest('base64url');
+  if (!timingSafeEqualStrings(sig, expectedSig)) return null;
+  try {
+    const parsed = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as GuestResultTokenPayload;
+    if (!parsed.subId || !parsed.sid || !parsed.exp || parsed.exp < Math.floor(Date.now() / 1000)) {
       return null;
     }
     return parsed;

@@ -379,6 +379,21 @@ export function parseOfficialQrPayload(raw: string): { sessionId: string; token:
   }
 }
 
-export function buildOfficialQrPayload(sessionId: string, qrTokenRaw: string): string {
-  return `thinkpulse://join?sid=${encodeURIComponent(sessionId)}&t=${encodeURIComponent(qrTokenRaw)}`;
+export function buildOfficialQrPayload(
+  sessionId: string,
+  qrTokenRaw: string,
+  baseUrl?: string | null
+): string {
+  const query = `sid=${encodeURIComponent(sessionId)}&t=${encodeURIComponent(qrTokenRaw)}`;
+  if (baseUrl) {
+    try {
+      const parsed = new URL(baseUrl);
+      if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+        return `${parsed.origin}/join?${query}`;
+      }
+    } catch {
+      // Fall back to thinkpulse:// URI scheme
+    }
+  }
+  return `thinkpulse://join?${query}`;
 }

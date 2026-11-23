@@ -331,7 +331,9 @@ export function LaunchSessionModal({
                   </div>
 
                   <p className="text-xs text-[#5B617A] dark:text-[#A49EC6] leading-relaxed">
-                    Rotating the QR immediately invalidates any previously projected or photographed QR token.
+                    {session.privacyMode === 'anonymous'
+                      ? 'Direct QR join enabled — participants can scan this QR with any camera or QR scanner without Google Sign-In. Rotating the QR immediately invalidates previous codes.'
+                      : 'Google Sign-In required — students join via the Student Portal QR scanner or 6-digit code. Rotating the QR immediately invalidates previous codes.'}
                   </p>
                 </div>
               </div>

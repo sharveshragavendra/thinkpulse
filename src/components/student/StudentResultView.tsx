@@ -16,10 +16,17 @@ import type { SubmissionDetailDTO } from '../../../shared/types.ts';
 
 interface StudentResultViewProps {
   submissionId: string;
+  guestResultToken?: string;
+  backLabel?: string;
   onBack: () => void;
 }
 
-export function StudentResultView({ submissionId, onBack }: StudentResultViewProps) {
+export function StudentResultView({
+  submissionId,
+  guestResultToken,
+  backLabel = 'Back to Student Portal',
+  onBack,
+}: StudentResultViewProps) {
   const [detail, setDetail] = useState<SubmissionDetailDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +34,8 @@ export function StudentResultView({ submissionId, onBack }: StudentResultViewPro
   const load = useCallback(async () => {
     try {
       const res = await apiRequest<{ submission: SubmissionDetailDTO }>(
-        `/my/submissions/${submissionId}`
+        guestResultToken ? `/public/submissions/${submissionId}` : `/my/submissions/${submissionId}`,
+        guestResultToken ? { headers: { 'X-Result-Token': guestResultToken } } : undefined
       );
       setDetail(res.submission);
       setError(null);
@@ -36,15 +44,15 @@ export function StudentResultView({ submissionId, onBack }: StudentResultViewPro
     } finally {
       setLoading(false);
     }
-  }, [submissionId]);
+  }, [guestResultToken, submissionId]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  // Live refresh when host finishes grading or recalculates answer key
+  // Live refresh when host finishes grading or recalculates answer key (authenticated students only)
   useRealtime(
-    true,
+    !guestResultToken,
     (evt) => {
       if (
         (evt.type === 'submission.graded' && evt.submissionId === submissionId) ||
@@ -75,7 +83,7 @@ export function StudentResultView({ submissionId, onBack }: StudentResultViewPro
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6334E8] dark:text-[#C4B5FD] cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Student Portal
+            {backLabel}
           </button>
           <ThemeToggle compact />
         </div>
@@ -102,7 +110,7 @@ export function StudentResultView({ submissionId, onBack }: StudentResultViewPro
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6334E8] dark:text-[#C4B5FD] hover:text-[#4F46E5] dark:hover:text-white cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Student Portal
+          {backLabel}
         </button>
         <ThemeToggle compact />
       </div>
