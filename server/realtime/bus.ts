@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import type { Response } from 'express';
+import { signRealtimeTicket, verifyRealtimeTicket } from '../utils/crypto.ts';
 import type { RealtimeEvent, RealtimeEventType, UserRole } from '../../shared/types.ts';
 
 interface SseClient {
@@ -18,32 +19,25 @@ interface SseTicket {
 }
 
 const clients = new Map<string, SseClient>();
-const tickets = new Map<string, SseTicket>();
 
 export function issueRealtimeTicket(params: {
   userId: string;
   institutionId: string;
   role: UserRole;
 }): string {
-  const now = Date.now();
-  // Prune expired tickets
-  for (const [k, v] of tickets.entries()) {
-    if (v.expiresAt < now) tickets.delete(k);
-  }
-  const ticket = crypto.randomBytes(24).toString('base64url');
-  tickets.set(ticket, {
-    ...params,
-    expiresAt: now + 60_000, // 60 second one-time ticket
-  });
-  return ticket;
+  // Stateless HMAC-signed ticket works cleanly across serverless instances and concurrent hosts
+  return signRealtimeTicket(params, 120);
 }
 
 export function consumeRealtimeTicket(ticket: string): SseTicket | null {
-  const found = tickets.get(ticket);
-  if (!found) return null;
-  tickets.delete(ticket);
-  if (found.expiresAt < Date.now()) return null;
-  return found;
+  const verified = verifyRealtimeTicket(ticket);
+  if (!verified) return null;
+  return {
+    userId: verified.userId,
+    institutionId: verified.institutionId,
+    role: verified.role as UserRole,
+    expiresAt: verified.exp * 1000,
+  };
 }
 
 export function registerSseClient(params: {
@@ -99,7 +93,7 @@ export function publishRealtimeEvent(params: {
   for (const client of clients.values()) {
     if (client.institutionId !== event.institutionId) continue;
 
-    // Hosts & Platform Admins receive all institution-scoped assessment/session/submission/student events
+    // All concurrent Hosts & Platform Admins receive institution-scoped events
     if (client.role === 'host' || client.role === 'platform_admin') {
       try {
         client.res.write(wire);
@@ -118,7 +112,6 @@ export function publishRealtimeEvent(params: {
         event.type === 'assessment.session_extended' || event.type === 'assessment.session_ended';
 
       if (isOwnResult || isSessionLifecycle) {
-        // Strip studentId from broadcast payload if not needed
         try {
           client.res.write(wire);
         } catch {

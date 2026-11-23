@@ -1,8 +1,18 @@
 import crypto from 'crypto';
 
-// Server-side ephemeral fallback if env secret is unset in local dev
-const FALLBACK_SESSION_SECRET = crypto.randomBytes(32).toString('hex');
-const FALLBACK_QR_PEPPER = crypto.randomBytes(32).toString('hex');
+// Deterministic fallback secret so serverless cold starts never invalidate active sessions
+// when SESSION_SIGNING_SECRET / QR_TOKEN_PEPPER are not explicitly set in env.
+function deriveFallbackSecret(purpose: string): string {
+  const seed =
+    process.env.DATABASE_URL?.trim() ||
+    process.env.SUPABASE_DB_PASSWORD?.trim() ||
+    process.env.FIREBASE_PROJECT_ID?.trim() ||
+    'thinkpulse-default-stable-secret-v1';
+  return crypto.createHash('sha256').update(`${purpose}:${seed}`).digest('hex');
+}
+
+const FALLBACK_SESSION_SECRET = deriveFallbackSecret('session');
+const FALLBACK_QR_PEPPER = deriveFallbackSecret('qr');
 
 function getSessionSecret(): string {
   return process.env.SESSION_SIGNING_SECRET?.trim() || FALLBACK_SESSION_SECRET;
@@ -37,7 +47,11 @@ export interface SignedTokenPayload {
   jti: string;
 }
 
-export function signAuthToken(payload: Omit<SignedTokenPayload, 'exp' | 'jti'>, ttlSeconds = 60 * 60 * 12): string {
+// Default 30-day session TTL so users remain signed in until they explicitly sign out
+export function signAuthToken(
+  payload: Omit<SignedTokenPayload, 'exp' | 'jti'>,
+  ttlSeconds = 60 * 60 * 24 * 30
+): string {
   const fullPayload: SignedTokenPayload = {
     ...payload,
     exp: Math.floor(Date.now() / 1000) + ttlSeconds,
@@ -69,6 +83,51 @@ export function verifyAuthToken(token: string): SignedTokenPayload | null {
   try {
     const parsed = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as SignedTokenPayload;
     if (!parsed.sub || !parsed.exp || parsed.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export interface SignedRealtimeTicketPayload {
+  userId: string;
+  institutionId: string;
+  role: string;
+  exp: number;
+}
+
+export function signRealtimeTicket(
+  payload: Omit<SignedRealtimeTicketPayload, 'exp'>,
+  ttlSeconds = 120
+): string {
+  const full: SignedRealtimeTicketPayload = {
+    ...payload,
+    exp: Math.floor(Date.now() / 1000) + ttlSeconds,
+  };
+  const encoded = Buffer.from(JSON.stringify(full), 'utf8').toString('base64url');
+  const sig = crypto
+    .createHmac('sha256', getSessionSecret())
+    .update(`rt:${encoded}`)
+    .digest('base64url');
+  return `tprt1.${encoded}.${sig}`;
+}
+
+export function verifyRealtimeTicket(ticket: string): SignedRealtimeTicketPayload | null {
+  const parts = ticket.split('.');
+  if (parts.length !== 3 || parts[0] !== 'tprt1') return null;
+  const [, encoded, sig] = parts;
+  const expectedSig = crypto
+    .createHmac('sha256', getSessionSecret())
+    .update(`rt:${encoded}`)
+    .digest('base64url');
+  if (!timingSafeEqualStrings(sig, expectedSig)) return null;
+  try {
+    const parsed = JSON.parse(
+      Buffer.from(encoded, 'base64url').toString('utf8')
+    ) as SignedRealtimeTicketPayload;
+    if (!parsed.userId || !parsed.institutionId || !parsed.exp || parsed.exp < Math.floor(Date.now() / 1000)) {
       return null;
     }
     return parsed;
@@ -123,7 +182,10 @@ export interface SessionAttemptTokenPayload {
   exp: number;
 }
 
-export function signSessionAttemptToken(payload: Omit<SessionAttemptTokenPayload, 'nonce' | 'exp'>, ttlSeconds = 60 * 60 * 10): string {
+export function signSessionAttemptToken(
+  payload: Omit<SessionAttemptTokenPayload, 'nonce' | 'exp'>,
+  ttlSeconds = 60 * 60 * 10
+): string {
   const full: SessionAttemptTokenPayload = {
     ...payload,
     nonce: crypto.randomBytes(12).toString('hex'),

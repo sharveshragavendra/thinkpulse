@@ -12,7 +12,6 @@ import {
   Play,
   Plus,
   RefreshCw,
-  Save,
   Trash2,
   UserCheck,
   X,
@@ -60,13 +59,10 @@ export function AssessmentBuilder({
 }: AssessmentBuilderProps) {
   const isQuiz = type === 'quiz';
   const [loading, setLoading] = useState(Boolean(assessmentId));
-  const [saving, setSaving] = useState(false);
   const [launching, setLaunching] = useState(false);
   const [recalculating, setRecalculating] = useState(false);
 
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [instructions, setInstructions] = useState('');
   const [privacyMode, setPrivacyMode] = useState<PrivacyMode>('normal');
   const [privacyLocked, setPrivacyLocked] = useState(false);
   const [durationMinutes, setDurationMinutes] = useState(15);
@@ -89,8 +85,6 @@ export function AssessmentBuilder({
       .then((res) => {
         const a = res.assessment;
         setTitle(a.title);
-        setDescription(a.description || '');
-        setInstructions(a.instructions || '');
         setPrivacyMode(a.privacyMode);
         setPrivacyLocked(Boolean(a.privacyLocked));
         setDurationMinutes(a.durationMinutes || 15);
@@ -149,8 +143,8 @@ export function AssessmentBuilder({
   const buildPayload = () => ({
     type,
     title: title.trim(),
-    description: description.trim(),
-    instructions: instructions.trim(),
+    description: '',
+    instructions: '',
     privacyMode,
     ...(isQuiz
       ? { durationMinutes: Math.max(1, Math.min(480, Number(durationMinutes) || 15)) }
@@ -160,7 +154,7 @@ export function AssessmentBuilder({
       showMarksToStudents: isQuiz ? showMarksToStudents : false,
       partialCreditDefault: 'none' as const,
     },
-    questions: questions.map((q, idx) => ({
+    questions: questions.map((q) => ({
       ...(q.id ? { id: q.id } : {}),
       type: q.type,
       text: q.text.trim(),
@@ -181,60 +175,46 @@ export function AssessmentBuilder({
     })),
   });
 
-  const handleSave = async (): Promise<string | null> => {
+  const handleLaunch = async () => {
     setError(null);
     setNotice(null);
     const localErr = validateLocal();
     if (localErr) {
       setError(localErr);
-      return null;
+      return;
     }
 
-    setSaving(true);
+    setLaunching(true);
     try {
       const body = buildPayload();
-      if (currentId) {
+      let id = currentId;
+
+      if (id) {
         const res = await apiRequest<{
           id: string;
           recalculationRecommended?: boolean;
-        }>(`/host/assessments/${currentId}`, { method: 'PATCH', body });
-        setDirty(false);
-        setNotice(`${isQuiz ? 'Quiz' : 'Poll'} saved successfully.`);
+        }>(`/host/assessments/${id}`, { method: 'PATCH', body });
+        id = res.id;
         if (res.recalculationRecommended) {
           setShowRecalcBanner(true);
         }
-        onSaved();
-        return res.id;
       } else {
         const res = await apiRequest<{ id: string }>('/host/assessments', {
           method: 'POST',
           body,
         });
-        setCurrentId(res.id);
-        setDirty(false);
-        setNotice(`${isQuiz ? 'Quiz' : 'Poll'} created.`);
-        onSaved();
-        return res.id;
+        id = res.id;
+        setCurrentId(id);
       }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Unable to save.');
-      return null;
-    } finally {
-      setSaving(false);
-    }
-  };
 
-  const handleSaveAndLaunch = async () => {
-    const id = await handleSave();
-    if (!id) return;
-    setLaunching(true);
-    setError(null);
-    try {
-      const res = await apiRequest<{ session: SessionDTO }>(`/host/assessments/${id}/launch`, {
+      setDirty(false);
+      onSaved();
+
+      const launched = await apiRequest<{ session: SessionDTO }>(`/host/assessments/${id}/launch`, {
         method: 'POST',
         body: isQuiz ? { durationMinutes } : {},
       });
-      onLaunched(res.session);
+      onLaunched(launched.session);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unable to launch session.');
     } finally {
@@ -345,7 +325,7 @@ export function AssessmentBuilder({
               {!isQuiz && (
                 <>
                   <span aria-hidden="true">·</span>
-                  <span>Vote & response mode (no marks)</span>
+                  <span>Vote &amp; response mode (no marks)</span>
                 </>
               )}
               {dirty && (
@@ -369,21 +349,12 @@ export function AssessmentBuilder({
           </button>
           <button
             type="button"
-            disabled={saving || launching}
-            onClick={() => void handleSave()}
-            className="tp-glass-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] disabled:opacity-60 cursor-pointer"
-          >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 text-[#6334E8] dark:text-[#C4B5FD]" />}
-            <span>Save Draft</span>
-          </button>
-          <button
-            type="button"
-            disabled={saving || launching}
-            onClick={() => void handleSaveAndLaunch()}
-            className="tp-gradient-btn text-white inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold shadow-sm disabled:opacity-60 cursor-pointer"
+            disabled={launching}
+            onClick={() => void handleLaunch()}
+            className="tp-gradient-btn text-white inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs font-semibold shadow-sm disabled:opacity-60 cursor-pointer"
           >
             {launching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
-            <span>Save & Launch</span>
+            <span>{launching ? 'Launching...' : 'Launch'}</span>
           </button>
         </div>
       </div>
@@ -422,59 +393,26 @@ export function AssessmentBuilder({
         </div>
       )}
 
-      {/* Configuration Surface */}
+      {/* Configuration Surface (Description & Instructions removed) */}
       <div className="tp-surface rounded-2xl p-5 sm:p-6 space-y-5">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <div className="lg:col-span-8 space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1.5">
-                {isQuiz ? 'Quiz Title' : 'Poll Title'} *
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  setDirty(true);
-                }}
-                placeholder={isQuiz ? 'e.g., Week 6 Relational Databases Quiz' : 'e.g., Lecture Pace & Topic Feedback Poll'}
-                className="tp-input w-full rounded-xl px-3.5 py-2.5 text-sm text-[#17143A] dark:text-[#F4F2FF]"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1.5">Description</label>
-                <textarea
-                  rows={2}
-                  value={description}
-                  onChange={(e) => {
-                    setDescription(e.target.value);
-                    setDirty(true);
-                  }}
-                  placeholder="Short context shown to students before joining..."
-                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1.5">
-                  Instructions (optional)
-                </label>
-                <textarea
-                  rows={2}
-                  value={instructions}
-                  onChange={(e) => {
-                    setInstructions(e.target.value);
-                    setDirty(true);
-                  }}
-                  placeholder="Any rules, time guidance, or rubric notes..."
-                  className="tp-input w-full rounded-xl px-3.5 py-2 text-sm text-[#17143A] dark:text-[#F4F2FF]"
-                />
-              </div>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          <div className="lg:col-span-7">
+            <label className="block text-xs font-semibold text-[#17143A] dark:text-[#F4F2FF] mb-1.5">
+              {isQuiz ? 'Quiz Title' : 'Poll Title'} *
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                setDirty(true);
+              }}
+              placeholder={isQuiz ? 'e.g., Week 6 Relational Databases Quiz' : 'e.g., Lecture Pace & Topic Feedback Poll'}
+              className="tp-input w-full rounded-xl px-3.5 py-2.5 text-sm text-[#17143A] dark:text-[#F4F2FF]"
+            />
           </div>
 
-          <div className="lg:col-span-4 space-y-4">
+          <div className="lg:col-span-5 space-y-4">
             {/* Explicit Privacy Mode Selector */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
@@ -523,7 +461,7 @@ export function AssessmentBuilder({
                     <EyeOff className="w-3.5 h-3.5 text-[#6334E8] dark:text-[#C4B5FD]" />
                     <span>Anonymous</span>
                   </div>
-                  <p className="text-[11px] mt-1 leading-tight">Hidden from host & exports</p>
+                  <p className="text-[11px] mt-1 leading-tight">Hidden from host &amp; exports</p>
                 </button>
               </div>
             </div>
@@ -834,7 +772,6 @@ export function AssessmentBuilder({
               </button>
             </div>
             <div className="p-6 space-y-4">
-              {description && <p className="text-sm text-[#4B4772] dark:text-[#C5BFE4]">{description}</p>}
               {questions.map((q, i) => (
                 <div key={i} className="bg-white dark:bg-[#171133]/85 rounded-2xl border border-[#DDD9F5] dark:border-white/12 p-5 space-y-3">
                   <div className="flex justify-between gap-3">
@@ -873,7 +810,7 @@ export function AssessmentBuilder({
       <ConfirmDialog
         open={confirmLeaveOpen}
         title="Unsaved Changes"
-        description="You have unsaved changes in this editor. Leave without saving?"
+        description="You have unsaved changes in this editor. Leave without launching?"
         confirmLabel="Leave Editor"
         cancelLabel="Stay & Edit"
         tone="danger"

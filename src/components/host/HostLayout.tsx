@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   PieChart,
+  QrCode,
   Radio,
   ScrollText,
   Server,
@@ -59,6 +60,7 @@ type NavTab =
 
 interface NavGroup {
   label: string;
+  collapsible?: boolean;
   items: Array<{
     id: NavTab;
     label: string;
@@ -71,6 +73,10 @@ export function HostLayout() {
   const [activeTab, setActiveTab] = useState<NavTab>('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
+    'Classroom & Insights': false,
+    Administration: false,
+  });
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
 
   // Sub-views
@@ -82,6 +88,7 @@ export function HostLayout() {
   const [analyticsTargetId, setAnalyticsTargetId] = useState<string | null>(null);
   const [retrievalEmail, setRetrievalEmail] = useState<string | null>(null);
   const [launchModalSession, setLaunchModalSession] = useState<SessionDTO | null>(null);
+  const [liveNoticeSession, setLiveNoticeSession] = useState<SessionDTO | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
 
   // Close account dropdown on outside click
@@ -113,6 +120,7 @@ export function HostLayout() {
   const navGroups: NavGroup[] = [
     {
       label: 'Workspace',
+      collapsible: false,
       items: [
         { id: 'overview', label: 'Overview', icon: LayoutDashboard },
         { id: 'quizzes', label: 'Quiz Generator', icon: ClipboardList },
@@ -122,6 +130,7 @@ export function HostLayout() {
     },
     {
       label: 'Classroom & Insights',
+      collapsible: true,
       items: [
         { id: 'students', label: 'Student Database', icon: Users },
         { id: 'retrieval', label: 'Data Retrieval', icon: FileSearch },
@@ -132,6 +141,7 @@ export function HostLayout() {
     },
     {
       label: 'Administration',
+      collapsible: true,
       items: [
         { id: 'hosts', label: 'Host Access', icon: UserPlus },
         ...(canManageServers ? [{ id: 'servers' as NavTab, label: 'Server Management', icon: Server }] : []),
@@ -142,6 +152,13 @@ export function HostLayout() {
   ];
 
   const allNavItems = navGroups.flatMap((g) => g.items);
+
+  const toggleGroup = (label: string) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
 
   const handleSelectTab = (tab: NavTab) => {
     setActiveTab(tab);
@@ -195,44 +212,85 @@ export function HostLayout() {
       </div>
 
       {/* Navigation Groups */}
-      <nav className="flex-1 overflow-y-auto px-3.5 py-2 space-y-5 relative z-10" aria-label="Host navigation">
-        {navGroups.map((group) => (
-          <div key={group.label} className="space-y-1">
-            <p className="px-3 pb-1 text-xs font-medium text-purple-200/80">
-              {group.label}
-            </p>
-            {group.items.map((item) => {
-              const Icon = item.icon;
-              const isCurrent = activeTab === item.id && !builderState && !reviewAssessment;
-              return (
+      <nav className="flex-1 overflow-y-auto px-3.5 py-2 space-y-4 relative z-10" aria-label="Host navigation">
+        {navGroups.map((group) => {
+          const isCollapsible = Boolean(group.collapsible);
+          const isOpen = isCollapsible ? Boolean(openDropdowns[group.label]) : true;
+          const hasActiveChild = group.items.some(
+            (item) => activeTab === item.id && !builderState && !reviewAssessment
+          );
+
+          return (
+            <div key={group.label} className="space-y-1">
+              {isCollapsible ? (
                 <button
-                  key={item.id}
                   type="button"
-                  onClick={() => handleSelectTab(item.id)}
-                  className={`relative w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13.5px] font-medium transition-colors whitespace-nowrap cursor-pointer ${
-                    isCurrent
-                      ? 'text-[#5B21B6] dark:text-white font-semibold'
-                      : 'text-white/90 hover:bg-white/15 hover:text-white'
+                  onClick={() => toggleGroup(group.label)}
+                  aria-expanded={isOpen}
+                  className={`w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-full text-[13px] font-semibold transition-colors cursor-pointer ${
+                    isOpen || hasActiveChild
+                      ? 'bg-white/18 text-white'
+                      : 'bg-white/10 text-purple-100 hover:bg-white/16 hover:text-white'
                   }`}
                 >
-                  {isCurrent && (
-                    <motion.span
-                      layoutId="hostNavActive"
-                      transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                      className="absolute inset-0 rounded-full tp-nav-pill-active"
-                    />
-                  )}
-                  <Icon
-                    className={`w-[17px] h-[17px] shrink-0 relative z-10 ${
-                      isCurrent ? 'text-[#7C3AED] dark:text-[#E9D5FF]' : 'text-purple-200'
+                  <span className="truncate">{group.label}</span>
+                  <ChevronDown
+                    className={`w-4 h-4 shrink-0 text-purple-200 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180' : ''
                     }`}
                   />
-                  <span className="truncate relative z-10">{item.label}</span>
                 </button>
-              );
-            })}
-          </div>
-        ))}
+              ) : (
+                <p className="px-3 pb-1 text-xs font-medium text-purple-200/80">
+                  {group.label}
+                </p>
+              )}
+
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    initial={isCollapsible ? { opacity: 0, height: 0 } : false}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                    className={`space-y-1 overflow-hidden ${isCollapsible ? 'pl-2 pt-1' : ''}`}
+                  >
+                    {group.items.map((item) => {
+                      const Icon = item.icon;
+                      const isCurrent = activeTab === item.id && !builderState && !reviewAssessment;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleSelectTab(item.id)}
+                          className={`relative w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13.5px] font-medium transition-colors whitespace-nowrap cursor-pointer ${
+                            isCurrent
+                              ? 'text-[#5B21B6] dark:text-white font-semibold'
+                              : 'text-white/90 hover:bg-white/15 hover:text-white'
+                          }`}
+                        >
+                          {isCurrent && (
+                            <motion.span
+                              layoutId="hostNavActive"
+                              transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                              className="absolute inset-0 rounded-full tp-nav-pill-active"
+                            />
+                          )}
+                          <Icon
+                            className={`w-[17px] h-[17px] shrink-0 relative z-10 ${
+                              isCurrent ? 'text-[#7C3AED] dark:text-[#E9D5FF]' : 'text-purple-200'
+                            }`}
+                          />
+                          <span className="truncate relative z-10">{item.label}</span>
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
       </nav>
 
       {/* Bottom Floating Account Dock + Pill Sign Out */}
@@ -428,6 +486,46 @@ export function HostLayout() {
         </header>
 
         <main className="flex-1 pt-4 w-full">
+          {/* Live Confirmation Banner (QR & 6-digit code stay hidden until host clicks QR) */}
+          {liveNoticeSession && (
+            <div
+              role="status"
+              className="mb-4 rounded-2xl bg-emerald-50/90 dark:bg-emerald-950/65 backdrop-blur-md border border-emerald-200 dark:border-emerald-400/30 px-4 py-3 flex flex-wrap items-center justify-between gap-3"
+            >
+              <div className="flex items-center gap-2.5 text-sm text-emerald-900 dark:text-emerald-200">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[11px] font-bold uppercase tracking-wide">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  Live
+                </span>
+                <span className="font-semibold">
+                  {liveNoticeSession.assessmentTitle || 'Session'} is saved and live.
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = liveNoticeSession;
+                    setLiveNoticeSession(null);
+                    setLaunchModalSession(target);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs font-semibold cursor-pointer"
+                >
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>Show QR &amp; Code</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLiveNoticeSession(null)}
+                  aria-label="Dismiss live notification"
+                  className="p-1.5 rounded-full text-emerald-800 dark:text-emerald-200 hover:bg-emerald-200/50 dark:hover:bg-white/10 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
           <motion.div
             key={viewKey}
             initial={{ opacity: 0, y: 8 }}
@@ -441,8 +539,9 @@ export function HostLayout() {
                 onBack={() => setBuilderState(null)}
                 onSaved={() => setRefreshTick((n) => n + 1)}
                 onLaunched={(sess) => {
+                  // Do not pop up QR immediately: save & indicate it is Live; QR opens only when host clicks QR
                   setBuilderState(null);
-                  setLaunchModalSession(sess);
+                  setLiveNoticeSession(sess);
                   setRefreshTick((n) => n + 1);
                 }}
               />

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext.tsx';
 import { ThemeProvider } from './context/ThemeContext.tsx';
 import { LoginPage } from './components/auth/LoginPage.tsx';
@@ -21,7 +22,7 @@ function readInitialQrJoinParams(): { sid: string; token: string } | null {
 }
 
 function ThinkPulseRouter() {
-  const { user } = useAuth();
+  const { user, initializing } = useAuth();
   const [qrJoin, setQrJoin] = useState<{ sid: string; token: string } | null>(
     readInitialQrJoinParams
   );
@@ -46,7 +47,16 @@ function ThinkPulseRouter() {
     );
   }
 
-  // Initial route is always ThinkPulse login (no marketing page before auth)
+  // Wait for persistent Firebase session check before flashing the login screen
+  if (initializing && !user) {
+    return (
+      <div className="min-h-screen tp-ambient-bg flex items-center justify-center">
+        <Loader2 className="w-7 h-7 animate-spin text-[#7C3AED] dark:text-[#C4B5FD]" />
+      </div>
+    );
+  }
+
+  // Initial route is ThinkPulse login when signed out
   if (!user) {
     return <LoginPage />;
   }

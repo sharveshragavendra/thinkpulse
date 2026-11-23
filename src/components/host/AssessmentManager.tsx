@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   BarChart3,
+  CheckCircle2,
   CheckSquare,
   Copy,
   Edit3,
@@ -44,6 +45,7 @@ export function AssessmentManager({
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<AssessmentDTO | null>(null);
 
   const load = useCallback(async () => {
@@ -72,12 +74,13 @@ export function AssessmentManager({
   const handleLaunch = async (a: AssessmentDTO) => {
     setBusyId(a.id);
     setError(null);
+    setNotice(null);
     try {
-      const res = await apiRequest<{ session: SessionDTO }>(`/host/assessments/${a.id}/launch`, {
+      await apiRequest<{ session: SessionDTO }>(`/host/assessments/${a.id}/launch`, {
         method: 'POST',
         body: a.type === 'quiz' ? { durationMinutes: a.durationMinutes } : {},
       });
-      onOpenSessionModal(res.session);
+      setNotice(`"${a.title}" is now Live. Click Live QR whenever you want to display the QR and 6-digit code.`);
       void load();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unable to launch session.');
@@ -159,7 +162,7 @@ export function AssessmentManager({
                   : 'text-[#5B617A] dark:text-[#C5BFE4] hover:text-[#17143A] dark:hover:text-white'
               }`}
             >
-              {st}
+              {st === 'active' ? 'Live' : st}
             </button>
           ))}
         </div>
@@ -168,6 +171,13 @@ export function AssessmentManager({
       {error && (
         <div role="alert" className="rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-400/30 px-4 py-3 text-sm text-rose-800 dark:text-rose-200">
           {error}
+        </div>
+      )}
+
+      {notice && (
+        <div role="status" className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-400/30 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-200 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <span>{notice}</span>
         </div>
       )}
 
@@ -185,7 +195,7 @@ export function AssessmentManager({
               No {isQuiz ? 'quizzes' : 'polls'} found
             </p>
             <p className="text-xs text-[#64748B] dark:text-[#A49EC6] max-w-sm mx-auto">
-              Create your first {isQuiz ? 'marks-based quiz' : 'classroom poll'} to generate a unique six-digit entry code and official QR.
+              Create your first {isQuiz ? 'marks-based quiz' : 'classroom poll'} to launch a live session.
             </p>
             <button
               type="button"
@@ -201,7 +211,7 @@ export function AssessmentManager({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[#17143A]/8 dark:border-white/10 bg-white/55 dark:bg-white/5 text-xs font-semibold text-[#5B617A] dark:text-[#C5BFE4]">
-                  <th className="py-3 px-5">Title & Details</th>
+                  <th className="py-3 px-5">Title &amp; Details</th>
                   <th className="py-3 px-4">Privacy</th>
                   <th className="py-3 px-4">Status</th>
                   <th className="py-3 px-4 text-right">Responses</th>
@@ -236,19 +246,22 @@ export function AssessmentManager({
                       </span>
                     </td>
                     <td className="py-3.5 px-4 whitespace-nowrap">
-                      <span
-                        className={`text-xs font-semibold capitalize ${
-                          a.status === 'active'
-                            ? 'text-emerald-700 dark:text-emerald-300'
-                            : a.status === 'expired'
-                            ? 'text-[#64748B] dark:text-[#8E88B0]'
-                            : 'text-[#6334E8] dark:text-[#C4B5FD]'
-                        }`}
-                      >
-                        {a.status === 'active' && a.activeSession
-                          ? `Active · ${a.activeSession.joinCode}`
-                          : a.status}
-                      </span>
+                      {a.status === 'active' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-xs font-semibold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Live
+                        </span>
+                      ) : (
+                        <span
+                          className={`text-xs font-semibold capitalize ${
+                            a.status === 'expired'
+                              ? 'text-[#64748B] dark:text-[#8E88B0]'
+                              : 'text-[#6334E8] dark:text-[#C4B5FD]'
+                          }`}
+                        >
+                          {a.status}
+                        </span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-right font-mono text-xs tabular-nums whitespace-nowrap">
                       <span className="font-semibold text-[#17143A] dark:text-[#F4F2FF]">{a.submissionCount ?? 0}</span>
@@ -317,7 +330,7 @@ export function AssessmentManager({
                         <button
                           type="button"
                           onClick={() => void handleDuplicate(a)}
-                          title="Duplicate draft"
+                          title="Duplicate"
                           className="p-1.5 rounded-lg text-[#4B4772] dark:text-[#C5BFE4] hover:text-[#6334E8] dark:hover:text-[#DDD6FE] hover:bg-[#F4F1FF] dark:hover:bg-white/10 cursor-pointer"
                         >
                           <Copy className="w-4 h-4" />

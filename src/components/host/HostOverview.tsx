@@ -3,12 +3,10 @@ import {
   AlertCircle,
   ArrowRight,
   ArrowUpRight,
-  Check,
   ClipboardCheck,
   ClipboardList,
   Clock,
   CloudUpload,
-  Copy,
   EyeOff,
   PieChart,
   Plus,
@@ -37,7 +35,6 @@ export function HostOverview({
   const [data, setData] = useState<HostOverviewDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -54,16 +51,6 @@ export function HostOverview({
   useEffect(() => {
     void load();
   }, [load, refreshTick]);
-
-  const handleCopyCode = async (session: SessionDTO) => {
-    try {
-      await navigator.clipboard.writeText(session.joinCode);
-      setCopiedId(session.id);
-      setTimeout(() => setCopiedId((curr) => (curr === session.id ? null : curr)), 1600);
-    } catch {
-      // ignore clipboard restriction
-    }
-  };
 
   if (loading) {
     return (
@@ -248,14 +235,16 @@ export function HostOverview({
                   className="px-6 py-4 flex flex-wrap items-center justify-between gap-4 hover:bg-white/55 dark:hover:bg-white/6 transition-colors"
                 >
                   <div className="min-w-0">
-                    <p className="font-semibold text-sm text-[#0F1035] dark:text-[#F4F2FF] truncate">
-                      {s.assessmentTitle}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#55587D] dark:text-[#A49EC6] mt-1">
-                      <span className="font-mono font-bold text-[#7C3AED] dark:text-[#C4B5FD] tabular-nums">
-                        {s.joinCode.slice(0, 3)} {s.joinCode.slice(3)}
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-sm text-[#0F1035] dark:text-[#F4F2FF] truncate">
+                        {s.assessmentTitle}
+                      </p>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wide shrink-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Live
                       </span>
-                      <span aria-hidden="true">·</span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#55587D] dark:text-[#A49EC6] mt-1">
                       <span className="capitalize inline-flex items-center gap-1">
                         {s.privacyMode === 'anonymous' ? (
                           <EyeOff className="w-3 h-3" />
@@ -278,24 +267,11 @@ export function HostOverview({
                   <div className="flex items-center gap-2 shrink-0">
                     <button
                       type="button"
-                      onClick={() => void handleCopyCode(s)}
-                      title="Copy 6-digit code"
-                      className="tp-glass-btn p-2 rounded-full text-[#43446B] dark:text-[#C5BFE4] cursor-pointer"
-                      aria-label={`Copy join code ${s.joinCode}`}
-                    >
-                      {copiedId === s.id ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                    <button
-                      type="button"
                       onClick={() => onOpenSessionModal(s)}
                       className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#7C3AED]/12 dark:bg-[#8B5CF6]/24 hover:bg-[#7C3AED]/20 dark:hover:bg-[#8B5CF6]/35 text-[#7C3AED] dark:text-[#DDD6FE] text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap"
                     >
                       <QrCode className="w-3.5 h-3.5" />
-                      <span>QR & Controls</span>
+                      <span>QR &amp; Controls</span>
                     </button>
                   </div>
                 </div>

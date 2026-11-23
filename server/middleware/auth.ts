@@ -17,6 +17,22 @@ export function isPrimaryHostEmail(email: string | null | undefined): boolean {
   return PRIMARY_HOST_EMAILS.has(email.trim().toLowerCase());
 }
 
+/**
+ * Classifies @bitsathy.ac.in emails:
+ * - If the local part (before @bitsathy.ac.in) contains a full stop ('.'), e.g. sharveshragavendram.mz26@bitsathy.ac.in -> student
+ * - If the local part does NOT contain a full stop ('.'), e.g. senthilkumarp@bitsathy.ac.in -> host (staff)
+ */
+export function classifyBitsathyEmail(email: string | null | undefined): 'host' | 'student' | null {
+  if (!email) return null;
+  const normalized = email.trim().toLowerCase();
+  const atIndex = normalized.lastIndexOf('@');
+  if (atIndex <= 0) return null;
+  const localPart = normalized.slice(0, atIndex);
+  const domain = normalized.slice(atIndex + 1);
+  if (domain !== 'bitsathy.ac.in') return null;
+  return localPart.includes('.') ? 'student' : 'host';
+}
+
 export interface HostSettingsSlice {
   addedHosts?: Array<{
     email: string;
@@ -46,6 +62,13 @@ export function resolveEffectiveRole(
   }
   if (isAuthorizedAddedHost(email, institutionSettings)) {
     return { role: 'host', serverAdmin: false };
+  }
+  const bitsathyRole = classifyBitsathyEmail(email);
+  if (bitsathyRole === 'host') {
+    return { role: 'host', serverAdmin: false };
+  }
+  if (bitsathyRole === 'student') {
+    return { role: 'student', serverAdmin: false };
   }
   return { role: 'student', serverAdmin: false };
 }

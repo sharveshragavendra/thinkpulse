@@ -52,7 +52,7 @@ export function SessionsView({ mode, refreshTick, onOpenSessionModal }: Sessions
         </h1>
         <p className="text-sm text-[#64748B] dark:text-[#A49EC6] mt-0.5">
           {mode === 'active'
-            ? 'Monitor running quizzes and polls, six-digit codes, QR token versions, and response counts.'
+            ? 'Monitor running quizzes and polls and click QR & Controls whenever you want to display the QR and 6-digit code.'
             : 'Inspect completed and expired classroom sessions with timestamps and total participation.'}
         </p>
       </div>
@@ -81,7 +81,6 @@ export function SessionsView({ mode, refreshTick, onOpenSessionModal }: Sessions
               <thead>
                 <tr className="border-b border-[#17143A]/8 dark:border-white/10 bg-white/55 dark:bg-white/5 text-xs font-semibold text-[#5B617A] dark:text-[#C5BFE4]">
                   <th className="py-3 px-5">Assessment</th>
-                  <th className="py-3 px-4">6-Digit Code</th>
                   <th className="py-3 px-4">Privacy</th>
                   <th className="py-3 px-4">Status / Time</th>
                   <th className="py-3 px-4 text-right">Responses</th>
@@ -92,13 +91,18 @@ export function SessionsView({ mode, refreshTick, onOpenSessionModal }: Sessions
                 {sessions.map((s) => (
                   <tr key={s.id} className="hover:bg-white/60 dark:hover:bg-white/6 transition-colors">
                     <td className="py-3.5 px-5">
-                      <p className="font-semibold text-[#17143A] dark:text-[#F4F2FF]">{s.assessmentTitle}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-[#17143A] dark:text-[#F4F2FF]">{s.assessmentTitle}</p>
+                        {s.effectiveStatus === 'active' && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wide">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Live
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-[#5B617A] dark:text-[#A49EC6] capitalize">
                         {s.assessmentType} · QR v{s.qrVersion}
                       </p>
-                    </td>
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#6334E8] dark:text-[#C4B5FD] tracking-widest tabular-nums">
-                      {s.joinCode.slice(0, 3)} {s.joinCode.slice(3)}
                     </td>
                     <td className="py-3.5 px-4 text-xs capitalize text-[#4B4772] dark:text-[#C5BFE4]">
                       <span className="inline-flex items-center gap-1">
@@ -136,7 +140,7 @@ export function SessionsView({ mode, refreshTick, onOpenSessionModal }: Sessions
                             className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#6334E8]/12 dark:bg-[#8B5CF6]/24 hover:bg-[#6334E8]/20 dark:hover:bg-[#8B5CF6]/35 text-[#6334E8] dark:text-[#DDD6FE] text-xs font-semibold transition-colors cursor-pointer"
                           >
                             <QrCode className="w-3.5 h-3.5" />
-                            <span>QR & Controls</span>
+                            <span>QR &amp; Controls</span>
                           </button>
                           <button
                             type="button"

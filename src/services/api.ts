@@ -1,12 +1,53 @@
-// In-memory auth token storage (NEVER persisted to localStorage or sessionStorage)
-let inMemoryToken: string | null = null;
+const TOKEN_STORAGE_KEY = 'tp_auth_token';
+
+function readStoredToken(): string | null {
+  try {
+    return window.localStorage.getItem(TOKEN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredToken(token: string | null) {
+  try {
+    if (token) {
+      window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
+    } else {
+      window.localStorage.removeItem(TOKEN_STORAGE_KEY);
+    }
+  } catch {
+    // ignore storage restrictions
+  }
+}
+
+let cachedToken: string | null = readStoredToken();
+let tokenRefresher: (() => Promise<string | null>) | null = null;
+let inflightRefresh: Promise<string | null> | null = null;
 
 export function setAuthToken(token: string | null) {
-  inMemoryToken = token;
+  cachedToken = token;
+  writeStoredToken(token);
 }
 
 export function getAuthToken(): string | null {
-  return inMemoryToken;
+  if (!cachedToken) {
+    cachedToken = readStoredToken();
+  }
+  return cachedToken;
+}
+
+export function setTokenRefresher(fn: (() => Promise<string | null>) | null) {
+  tokenRefresher = fn;
+}
+
+async function refreshAuthTokenOnce(): Promise<string | null> {
+  if (!tokenRefresher) return null;
+  if (!inflightRefresh) {
+    inflightRefresh = tokenRefresher().finally(() => {
+      inflightRefresh = null;
+    });
+  }
+  return inflightRefresh;
 }
 
 export class ApiError extends Error {
@@ -29,6 +70,7 @@ export async function apiRequest<T>(
     method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
     body?: unknown;
     headers?: Record<string, string>;
+    _retried?: boolean;
   } = {}
 ): Promise<T> {
   const headers: Record<string, string> = {
@@ -40,8 +82,9 @@ export async function apiRequest<T>(
     headers['Content-Type'] = 'application/json';
   }
 
-  if (inMemoryToken) {
-    headers['Authorization'] = `Bearer ${inMemoryToken}`;
+  const token = getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   const response = await fetch(`/api/v1${path}`, {
@@ -49,6 +92,14 @@ export async function apiRequest<T>(
     headers,
     body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
   });
+
+  // Transparently refresh token on 401 so tab switches or cold starts never show "session expired"
+  if (response.status === 401 && !options._retried && !path.startsWith('/auth/')) {
+    const newToken = await refreshAuthTokenOnce();
+    if (newToken) {
+      return apiRequest<T>(path, { ...options, _retried: true });
+    }
+  }
 
   const contentType = response.headers.get('content-type') || '';
   if (!response.ok) {
@@ -73,12 +124,23 @@ export async function apiRequest<T>(
   return (await response.text()) as unknown as T;
 }
 
-export async function downloadAuthenticatedCsv(path: string, fallbackFilename: string): Promise<void> {
+export async function downloadAuthenticatedCsv(
+  path: string,
+  fallbackFilename: string,
+  retried = false
+): Promise<void> {
   const headers: Record<string, string> = {};
-  if (inMemoryToken) {
-    headers['Authorization'] = `Bearer ${inMemoryToken}`;
+  const token = getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
   const response = await fetch(`/api/v1${path}`, { headers });
+  if (response.status === 401 && !retried) {
+    const newToken = await refreshAuthTokenOnce();
+    if (newToken) {
+      return downloadAuthenticatedCsv(path, fallbackFilename, true);
+    }
+  }
   if (!response.ok) {
     throw new ApiError('Unable to export CSV file.', response.status);
   }
