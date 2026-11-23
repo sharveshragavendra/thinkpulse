@@ -9,46 +9,45 @@ export function AmbientCanvas({ variant = 'pastel' }: AmbientCanvasProps) {
   const { isDark } = useTheme();
 
   if (variant === 'purple') {
+    const dotColor = isDark ? 'rgba(216, 180, 254, 0.28)' : 'rgba(255, 255, 255, 0.72)';
+    const gridStroke = isDark ? 'rgba(196, 181, 253, 0.08)' : 'rgba(124, 58, 237, 0.08)';
+    const hexStroke = isDark ? 'rgba(221, 214, 254, 0.24)' : 'rgba(255, 255, 255, 0.72)';
+    const hexFill = isDark ? 'rgba(139, 92, 246, 0.14)' : 'rgba(255, 255, 255, 0.26)';
+    const ringStroke = isDark ? 'rgba(196, 181, 253, 0.30)' : 'rgba(255, 255, 255, 0.80)';
+    const facetFill = isDark ? 'rgba(139, 92, 246, 0.16)' : 'rgba(255, 255, 255, 0.34)';
+
     return (
       <div
         className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none"
         aria-hidden="true"
       >
-        {/* Vivid luminous purple-lavender / midnight-amethyst silk glow pools */}
+        {/* Soft luminous lavender/purple atmospheric glow pools */}
         <div
-          className="tp-wave-a absolute -top-28 right-[4%] w-[46rem] h-[40rem] rounded-full opacity-85 blur-3xl"
+          className="absolute -top-28 right-[6%] w-[44rem] h-[38rem] rounded-full opacity-80 blur-3xl"
           style={{
             background: isDark
-              ? 'radial-gradient(circle, rgba(139, 92, 246, 0.36) 0%, rgba(109, 40, 217, 0.22) 46%, transparent 74%)'
-              : 'radial-gradient(circle, rgba(126, 34, 206, 0.62) 0%, rgba(168, 85, 247, 0.36) 46%, transparent 74%)',
+              ? 'radial-gradient(circle, rgba(139, 92, 246, 0.34) 0%, rgba(109, 40, 217, 0.18) 48%, transparent 74%)'
+              : 'radial-gradient(circle, rgba(147, 51, 234, 0.42) 0%, rgba(192, 132, 252, 0.26) 48%, transparent 74%)',
           }}
         />
         <div
-          className="tp-wave-b absolute top-[26%] -left-24 w-[42rem] h-[42rem] rounded-full opacity-75 blur-3xl"
+          className="absolute top-[30%] -left-24 w-[40rem] h-[40rem] rounded-full opacity-70 blur-3xl"
           style={{
             background: isDark
-              ? 'radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, rgba(124, 58, 237, 0.18) 50%, transparent 74%)'
-              : 'radial-gradient(circle, rgba(167, 139, 250, 0.56) 0%, rgba(196, 181, 253, 0.34) 50%, transparent 74%)',
+              ? 'radial-gradient(circle, rgba(99, 102, 241, 0.24) 0%, rgba(124, 58, 237, 0.14) 50%, transparent 74%)'
+              : 'radial-gradient(circle, rgba(167, 139, 250, 0.44) 0%, rgba(221, 214, 254, 0.26) 50%, transparent 74%)',
           }}
         />
         <div
-          className="tp-wave-a absolute -bottom-36 left-[24%] w-[48rem] h-[42rem] rounded-full opacity-80 blur-3xl"
+          className="absolute -bottom-28 right-[-8%] w-[42rem] h-[40rem] rounded-full opacity-75 blur-3xl"
           style={{
             background: isDark
-              ? 'radial-gradient(circle, rgba(147, 51, 234, 0.30) 0%, rgba(76, 29, 149, 0.20) 48%, transparent 74%)'
-              : 'radial-gradient(circle, rgba(147, 51, 234, 0.46) 0%, rgba(192, 132, 252, 0.34) 48%, transparent 74%)',
-          }}
-        />
-        <div
-          className="tp-wave-b absolute -bottom-24 -right-24 w-[42rem] h-[42rem] rounded-full opacity-80 blur-3xl"
-          style={{
-            background: isDark
-              ? 'radial-gradient(circle, rgba(124, 58, 237, 0.36) 0%, rgba(88, 28, 135, 0.20) 50%, transparent 74%)'
-              : 'radial-gradient(circle, rgba(124, 58, 237, 0.60) 0%, rgba(139, 92, 246, 0.30) 50%, transparent 74%)',
+              ? 'radial-gradient(circle, rgba(124, 58, 237, 0.32) 0%, rgba(88, 28, 135, 0.16) 50%, transparent 74%)'
+              : 'radial-gradient(circle, rgba(124, 58, 237, 0.44) 0%, rgba(196, 181, 253, 0.26) 50%, transparent 74%)',
           }}
         />
 
-        {/* Sculptural Purple Silk Liquid Glass Waves */}
+        {/* Crisp Geometric Pattern: Concentric Luminous Rings, Hexagons, Isometric Glass Facets & Dot Matrix */}
         <svg
           viewBox="0 0 1440 900"
           preserveAspectRatio="xMidYMid slice"
@@ -56,74 +55,128 @@ export function AmbientCanvas({ variant = 'pastel' }: AmbientCanvasProps) {
           fill="none"
         >
           <defs>
-            <linearGradient id="tpPurpleTopRibbon" x1="15%" y1="0%" x2="92%" y2="85%">
-              <stop offset="0%" stopColor={isDark ? '#7C3AED' : '#A855F7'} stopOpacity={isDark ? '0.38' : '0.64'} />
-              <stop offset="42%" stopColor={isDark ? '#5B21B6' : '#7C3AED'} stopOpacity={isDark ? '0.52' : '0.82'} />
-              <stop offset="76%" stopColor={isDark ? '#9333EA' : '#C084FC'} stopOpacity={isDark ? '0.34' : '0.54'} />
-              <stop offset="100%" stopColor={isDark ? '#3B0764' : '#EDE9FE'} stopOpacity={isDark ? '0.16' : '0.24'} />
+            <pattern id="tpGeoHexGrid" width="84" height="72.74" patternUnits="userSpaceOnUse">
+              <path
+                d="M 21 0 L 63 0 L 84 36.37 L 63 72.74 L 21 72.74 L 0 36.37 Z"
+                stroke={gridStroke}
+                strokeWidth="1"
+              />
+            </pattern>
+
+            <linearGradient id="tpGeoRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={isDark ? '#DDD6FE' : '#FFFFFF'} stopOpacity={isDark ? '0.52' : '0.92'} />
+              <stop offset="50%" stopColor={isDark ? '#A78BFA' : '#C084FC'} stopOpacity={isDark ? '0.32' : '0.62'} />
+              <stop offset="100%" stopColor={isDark ? '#7C3AED' : '#FFFFFF'} stopOpacity={isDark ? '0.18' : '0.45'} />
             </linearGradient>
 
-            <linearGradient id="tpPurpleMidSilk" x1="0%" y1="60%" x2="100%" y2="12%">
-              <stop offset="0%" stopColor={isDark ? '#4C1D95' : '#FFFFFF'} stopOpacity={isDark ? '0.22' : '0.34'} />
-              <stop offset="35%" stopColor={isDark ? '#6D28D9' : '#DDD6FE'} stopOpacity={isDark ? '0.28' : '0.52'} />
-              <stop offset="68%" stopColor={isDark ? '#7E22CE' : '#A855F7'} stopOpacity={isDark ? '0.36' : '0.58'} />
-              <stop offset="100%" stopColor={isDark ? '#3B0764' : '#7E22CE'} stopOpacity={isDark ? '0.44' : '0.68'} />
+            <linearGradient id="tpGeoFacetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={isDark ? '#A78BFA' : '#FFFFFF'} stopOpacity={isDark ? '0.26' : '0.64'} />
+              <stop offset="100%" stopColor={isDark ? '#4C1D95' : '#DDD6FE'} stopOpacity={isDark ? '0.12' : '0.28'} />
             </linearGradient>
 
-            <linearGradient id="tpPurpleBottomWave" x1="8%" y1="95%" x2="95%" y2="35%">
-              <stop offset="0%" stopColor={isDark ? '#581C87' : '#9333EA'} stopOpacity={isDark ? '0.36' : '0.52'} />
-              <stop offset="44%" stopColor={isDark ? '#4338CA' : '#C4B5FD'} stopOpacity={isDark ? '0.28' : '0.48'} />
-              <stop offset="78%" stopColor={isDark ? '#6D28D9' : '#8B5CF6'} stopOpacity={isDark ? '0.40' : '0.64'} />
-              <stop offset="100%" stopColor={isDark ? '#3B0764' : '#6D28D9'} stopOpacity={isDark ? '0.52' : '0.78'} />
-            </linearGradient>
+            <pattern id="tpGeoDots" width="18" height="18" patternUnits="userSpaceOnUse">
+              <circle cx="3" cy="3" r="1.6" fill={dotColor} />
+            </pattern>
 
-            <linearGradient id="tpPurpleRimLight" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={isDark ? '#DDD6FE' : '#FFFFFF'} stopOpacity={isDark ? '0.42' : '0.92'} />
-              <stop offset="50%" stopColor={isDark ? '#A78BFA' : '#F3E8FF'} stopOpacity={isDark ? '0.26' : '0.62'} />
-              <stop offset="100%" stopColor={isDark ? '#E9D5FF' : '#FFFFFF'} stopOpacity={isDark ? '0.38' : '0.88'} />
-            </linearGradient>
+            <filter id="tpGeoRingGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="7" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
 
-          <g className="tp-wave-a">
-            <path
-              d="M 640 -40 C 785 28, 920 120, 1085 68 C 1220 24, 1345 -18, 1510 -30 L 1510 380 C 1360 390, 1235 288, 1110 232 C 972 170, 810 198, 665 110 C 605 74, 590 10, 640 -40 Z"
-              fill="url(#tpPurpleTopRibbon)"
-            />
-            <path
-              d="M 650 -20 C 790 44, 922 126, 1088 72 C 1222 28, 1348 -14, 1502 -26"
-              stroke="url(#tpPurpleRimLight)"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            />
-          </g>
+          {/* Subtle full-canvas geometric hex lattice */}
+          <rect width="1440" height="900" fill="url(#tpGeoHexGrid)" opacity={isDark ? '0.65' : '0.55'} />
 
-          <g className="tp-wave-b" opacity={isDark ? '0.72' : '0.82'}>
-            <path
-              d="M -80 640 C 145 480, 390 420, 650 370 C 920 318, 1140 160, 1520 55 L 1520 340 C 1230 445, 985 568, 700 620 C 420 672, 175 740, -80 860 Z"
-              fill="url(#tpPurpleMidSilk)"
+          {/* Concentric Luminous Orbital Rings (upper-right geometric focal accent) */}
+          <g opacity={isDark ? '0.78' : '0.92'}>
+            <circle
+              cx="1260"
+              cy="40"
+              r="320"
+              stroke="url(#tpGeoRingGrad)"
+              strokeWidth="3.2"
+              filter="url(#tpGeoRingGlow)"
             />
-            <path
-              d="M -60 648 C 155 488, 395 426, 655 376 C 922 324, 1145 166, 1505 62"
-              stroke={isDark ? '#C4B5FD' : '#FFFFFF'}
-              strokeOpacity={isDark ? '0.28' : '0.68'}
+            <circle
+              cx="1260"
+              cy="40"
+              r="256"
+              stroke={ringStroke}
+              strokeWidth="1.5"
+              strokeDasharray="10 10"
+              opacity="0.72"
+            />
+            <circle
+              cx="1260"
+              cy="40"
+              r="188"
+              stroke="url(#tpGeoRingGrad)"
               strokeWidth="2"
-              strokeLinecap="round"
+              opacity="0.82"
             />
           </g>
 
-          <g className="tp-wave-a">
-            <path
-              d="M -60 760 C 130 680, 345 735, 560 808 C 785 884, 1040 818, 1280 712 C 1375 670, 1455 645, 1520 640 L 1520 960 L -60 960 Z"
-              fill="url(#tpPurpleBottomWave)"
+          {/* Translucent Geometric Hexagons (upper-center cluster inspired by reference) */}
+          <g>
+            <polygon
+              points="895,120 936,144 936,192 895,216 854,192 854,144"
+              fill={hexFill}
+              stroke={hexStroke}
+              strokeWidth="1.6"
             />
-            <path
-              d="M -50 764 C 135 684, 348 738, 562 812 C 786 886, 1042 820, 1282 716 C 1376 674, 1455 648, 1510 644"
-              stroke={isDark ? '#DDD6FE' : '#FFFFFF'}
-              strokeOpacity={isDark ? '0.30' : '0.72'}
-              strokeWidth="2.2"
-              strokeLinecap="round"
+            <polygon
+              points="966,162 1007,186 1007,234 966,258 925,234 925,186"
+              fill={hexFill}
+              stroke={hexStroke}
+              strokeWidth="1.8"
+            />
+            <polygon
+              points="824,162 854,180 854,216 824,234 794,216 794,180"
+              fill="none"
+              stroke={hexStroke}
+              strokeWidth="1.2"
+              opacity="0.65"
+            />
+            <polygon
+              points="1335,440 1372,462 1372,506 1335,528 1298,506 1298,462"
+              fill={hexFill}
+              stroke={hexStroke}
+              strokeWidth="1.4"
+              opacity="0.78"
             />
           </g>
+
+          {/* Frosted Isometric Glass Tiles (lower-left geometric accent) */}
+          <g opacity={isDark ? '0.72' : '0.88'}>
+            <rect
+              x="255"
+              y="775"
+              width="110"
+              height="68"
+              rx="16"
+              transform="rotate(24 255 775)"
+              fill="url(#tpGeoFacetGrad)"
+              stroke={hexStroke}
+              strokeWidth="1.6"
+            />
+            <rect
+              x="395"
+              y="792"
+              width="116"
+              height="70"
+              rx="16"
+              transform="rotate(24 395 792)"
+              fill={facetFill}
+              stroke={hexStroke}
+              strokeWidth="1.5"
+            />
+          </g>
+
+          {/* Precision Geometric Dot Matrix (bottom-right corner) */}
+          <rect x="1180" y="758" width="240" height="126" fill="url(#tpGeoDots)" />
         </svg>
       </div>
     );
@@ -160,7 +213,7 @@ export function AmbientCanvas({ variant = 'pastel' }: AmbientCanvasProps) {
         }}
       />
 
-      {/* Sculptural 3D Iridescent Liquid Glass Ribbon Waves */}
+      {/* Sculptural 3D Iridescent Liquid Glass Ribbon Waves (Login Page) */}
       <svg
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
